@@ -7,6 +7,7 @@ import {
   Button,
   Image,
 } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 import { Layout } from "../../components/Layout/Layout";
 
 export default function Error404(): JSX.Element {
@@ -35,15 +36,17 @@ export default function Error404(): JSX.Element {
             below.
           </Text>
           <Stack spacing={6} direction="row">
-            <Button
-              rounded="full"
-              px={6}
-              colorScheme="brand"
-              bg="brand.500"
-              _hover={{ bg: "brand.600" }}
-            >
-              Go to dashboard
-            </Button>
+            <Link to="/dashboard">
+              <Button
+                rounded="full"
+                px={6}
+                colorScheme="brand"
+                bg="brand.500"
+                _hover={{ bg: "brand.600" }}
+              >
+                Go to dashboard
+              </Button>
+            </Link>
           </Stack>
           <Flex w="full">
             <Image src="/images/error404.png" alt="error png" />
