@@ -25,7 +25,7 @@ export default function Error404(): JSX.Element {
             lineHeight="110%"
           >
             404{" "}
-            <Text as="span" color="orange.400">
+            <Text as="span" color="brand.500">
               Error
             </Text>
           </Heading>
@@ -38,9 +38,9 @@ export default function Error404(): JSX.Element {
             <Button
               rounded="full"
               px={6}
-              colorScheme="orange"
-              bg="orange.400"
-              _hover={{ bg: "orange.500" }}
+              colorScheme="brand"
+              bg="brand.500"
+              _hover={{ bg: "brand.600" }}
             >
               Go to dashboard
             </Button>
