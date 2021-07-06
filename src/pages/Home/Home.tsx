@@ -13,6 +13,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { FaEthereum } from "react-icons/all";
+import { Link } from "react-router-dom";
 import { Layout } from "../../components/Layout/Layout";
 
 /* eslint-disable max-len */
@@ -86,26 +87,30 @@ export default function Home(): JSX.Element {
               spacing={{ base: 4, sm: 6 }}
               direction={{ base: "column", sm: "row" }}
             >
-              <Button
-                rounded="full"
-                size="lg"
-                fontWeight="normal"
-                px={6}
-                colorScheme="blue"
-                bg="blue.400"
-                _hover={{ bg: "blue.500" }}
-              >
-                Create Account
-              </Button>
-              <Button
-                rounded="full"
-                size="lg"
-                fontWeight="normal"
-                px={6}
-                leftIcon={<FaEthereum style={{ color: "#9e9e9e" }} />}
-              >
-                Login
-              </Button>
+              <Link to="/create-wallet">
+                <Button
+                  rounded="full"
+                  size="lg"
+                  fontWeight="normal"
+                  px={6}
+                  colorScheme="blue"
+                  bg="blue.400"
+                  _hover={{ bg: "blue.500" }}
+                >
+                  Create Account
+                </Button>
+              </Link>
+              <Link to="/login">
+                <Button
+                  rounded="full"
+                  size="lg"
+                  fontWeight="normal"
+                  px={6}
+                  leftIcon={<FaEthereum style={{ color: "#9e9e9e" }} />}
+                >
+                  Login
+                </Button>
+              </Link>
             </Stack>
           </Stack>
           <Flex
