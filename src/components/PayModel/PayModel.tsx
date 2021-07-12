@@ -83,7 +83,7 @@ export function PayModel(): JSX.Element {
               </Flex>
             </Flex>
           </ModalBody>
-          <ModalFooter> </ModalFooter>
+          <ModalFooter> {decodedString}</ModalFooter>
         </ModalContent>
       </Modal>
     </>
