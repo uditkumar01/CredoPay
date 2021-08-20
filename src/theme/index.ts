@@ -3,7 +3,7 @@ import { extendTheme } from "@chakra-ui/react";
 
 export const theme = extendTheme({
   config: {
-    useSystemColorMode: true,
+    useSystemColorMode: false,
     initialColorMode: "dark",
   },
   fonts: {
@@ -35,6 +35,7 @@ export const theme = extendTheme({
       700: "#333943",
       800: "#272C38",
       900: "#1A202C",
+      1000: "#1a202c",
     },
   },
 });

@@ -22,7 +22,7 @@ export function Navbar(): JSX.Element {
   return (
     <>
       <chakra.header
-        bg={bg}
+        bg="black.1000"
         w="full"
         px={{ base: 2, sm: 4 }}
         py={4}
@@ -48,7 +48,12 @@ export function Navbar(): JSX.Element {
               <Image src="/svgs/logo.svg" height="30" />
               <VisuallyHidden>CredoPay</VisuallyHidden>
             </chakra.a>
-            <chakra.h1 fontSize="xl" fontWeight="medium" ml="2">
+            <chakra.h1
+              color="brand.500"
+              fontSize="xl"
+              fontWeight="medium"
+              ml="2"
+            >
               CredoPay
             </chakra.h1>
           </Flex>
@@ -60,13 +65,16 @@ export function Navbar(): JSX.Element {
               display={{ base: "none", md: "inline-flex" }}
             >
               <Link to="/login">
-                <Button variant="ghost">Login</Button>
+                <Button color="brand.500" variant="ghost">
+                  Login
+                </Button>
               </Link>
             </HStack>
             <Link to="/create-wallet">
               <Button
-                colorScheme="blue"
+                colorScheme="teal"
                 bg="brand.500"
+                color="black.1000"
                 _hover={{ bg: "brand.600" }}
                 size="sm"
               >

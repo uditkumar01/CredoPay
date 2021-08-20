@@ -1,9 +1,28 @@
-import { Box, Button, Flex, Heading, VStack, Text } from "@chakra-ui/react";
+import { Box, Flex, Heading, VStack, Text } from "@chakra-ui/react";
+import { CreateCardModel } from "../../components/CreateCardModel/CreateCardModel";
 import { AssetContainer } from "../../components/AssetContainer/AssetContainer";
 import { Layout } from "../../components/Layout/Layout";
 import { PayModel } from "../../components/PayModel/PayModel";
+import { Sidebar } from "../../components/Sidebar/Sidebar";
+import { ButtonList } from "./Dashboard.types";
 
 export default function DashBoard(): JSX.Element {
+  const buttonList: ButtonList[] = [
+    {
+      component: (
+        <>
+          <CreateCardModel />
+        </>
+      ),
+    },
+    {
+      component: (
+        <>
+          <CreateCardModel />
+        </>
+      ),
+    },
+  ];
   return (
     <Layout>
       <Flex flexDir="column" align="center" width="100%">
@@ -40,6 +59,7 @@ export default function DashBoard(): JSX.Element {
               </Text>
               <Heading
                 fontSize="2.6em"
+                color="whiteAlpha.900"
                 textAlign={{ base: "center", md: "left" }}
               >
                 200.00
@@ -53,9 +73,7 @@ export default function DashBoard(): JSX.Element {
             d="flex"
             flexDir={{ base: "row", md: "column" }}
           >
-            <Button variant="solid" minW="150px" mr={{ base: "1rem", md: "0" }}>
-              Add funds
-            </Button>
+            <Sidebar title="Manage Account" buttonList={buttonList} />
             <PayModel />
           </VStack>
         </Flex>

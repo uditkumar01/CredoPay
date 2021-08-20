@@ -13,6 +13,7 @@ import {
   Text,
   Input,
   Divider,
+  DarkMode,
 } from "@chakra-ui/react";
 import QrReader from "react-qr-reader";
 import { useRef, useState } from "react";
@@ -34,7 +35,7 @@ export function PayModel(): JSX.Element {
   };
 
   return (
-    <>
+    <DarkMode>
       <Button ref={btnRef} onClick={onOpen} variant="outline" minW="150px">
         Pay Now
       </Button>
@@ -47,8 +48,8 @@ export function PayModel(): JSX.Element {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Pay Now</ModalHeader>
-          <ModalCloseButton />
+          <ModalHeader color="black.50">Pay Now</ModalHeader>
+          <ModalCloseButton color="black.50" />
           <ModalBody>
             <Flex
               height="auto"
@@ -69,7 +70,11 @@ export function PayModel(): JSX.Element {
               <Divider mb="2rem" />
               <Flex align="flex-end" mt="1rem">
                 <FormControl id="upi" mr="1rem">
-                  <Input type="upi" placeholder="UPI address" />
+                  <Input
+                    type="upi"
+                    borderColor="black.300"
+                    placeholder="UPI address"
+                  />
                 </FormControl>
                 <Button
                   bg="brand.600"
@@ -86,6 +91,6 @@ export function PayModel(): JSX.Element {
           <ModalFooter> {decodedString}</ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </DarkMode>
   );
 }

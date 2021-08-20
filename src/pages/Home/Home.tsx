@@ -59,22 +59,22 @@ export default function Home(): JSX.Element {
                 as="span"
                 position="relative"
                 fontSize={["3.6rem", "4rem"]}
+                color="blue.400"
                 _after={{
                   content: "''",
-                  width: "full",
+                  width: "100%",
                   height: "30%",
                   position: "absolute",
                   bottom: 1,
                   left: 0,
-                  bg: "blue.400",
-                  zIndex: -1,
+                  zIndex: 1,
                   opacity: "0.9",
                 }}
               >
                 Payments,
               </Text>
               <br />
-              <Text as="span" color="blue.400">
+              <Text as="span" color="brand.400">
                 made easy!
               </Text>
             </Heading>
@@ -93,7 +93,7 @@ export default function Home(): JSX.Element {
                   size="lg"
                   fontWeight="normal"
                   px={6}
-                  colorScheme="blue"
+                  colorScheme="teal"
                   bg="blue.400"
                   _hover={{ bg: "blue.500" }}
                 >
@@ -105,8 +105,12 @@ export default function Home(): JSX.Element {
                   rounded="full"
                   size="lg"
                   fontWeight="normal"
+                  bg="brand.500"
+                  color="black.1000"
                   px={6}
-                  leftIcon={<FaEthereum style={{ color: "#9e9e9e" }} />}
+                  leftIcon={<FaEthereum style={{ color: "#3278b3" }} />}
+                  _hover={{ bg: "brand.200" }}
+                  _active={{ bg: "brand.200" }}
                 >
                   Login
                 </Button>

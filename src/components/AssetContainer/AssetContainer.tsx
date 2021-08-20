@@ -28,7 +28,9 @@ export function AssetContainer(): JSX.Element {
             ETH
           </Heading>
         </Flex>
-        <Heading ml="1rem">0.145</Heading>
+        <Heading ml="1rem" color="whiteAlpha.900">
+          0.145
+        </Heading>
       </Flex>
     </>
   );
