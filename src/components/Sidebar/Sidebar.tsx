@@ -6,6 +6,7 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerOverlay,
+  Box,
   useDisclosure,
   VStack,
 } from "@chakra-ui/react";
@@ -39,7 +40,11 @@ export function Sidebar({ title, buttonList }: SidebarProps): JSX.Element {
           </DrawerHeader>
           <DrawerBody p="0.5rem 0">
             <VStack align="stretch">
-              {buttonList.map(({ component }) => component)}
+              {buttonList.map(({ component }, index) => (
+                <Box w="100%" key={index.toString()}>
+                  {component}
+                </Box>
+              ))}
             </VStack>
           </DrawerBody>
         </DrawerContent>

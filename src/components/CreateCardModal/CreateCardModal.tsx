@@ -13,9 +13,13 @@ import {
   InputGroup,
   InputRightElement,
   Flex,
-  DarkMode,
+  InputLeftAddon,
 } from "@chakra-ui/react";
 import { ChangeEvent, useRef, useState } from "react";
+import { v4 as uuid } from "uuid";
+import { createCard, getPCIPublicKey } from "../../lib/cardsApi";
+import { openPGPEncryption } from "../../lib/openpgp";
+import { CreateCardPayload } from "./CreateCardModal.types";
 
 /* eslint-disable max-len */
 function CardIcon(): JSX.Element {
@@ -56,23 +60,12 @@ function CalenderIcon(): JSX.Element {
 
 /* eslint-enable max-len */
 
-export function CreateCardModel(): JSX.Element {
+export function CreateCardModal(): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  // mock user details json
-  const userDetails = {
-    name: "John Doe",
-    email: "johndoe@gmail.com",
-    phone: "1234567890",
-    line1: "123 Main St",
-    city: "New York",
-    district: "NY",
-    postalCode: "10001",
-    country: "USA",
-  };
 
   const initialRef = useRef(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [amount, setAmount] = useState("");
   const [cardNo, setCardNo] = useState<string>("");
   const [cvv, setCvv] = useState<string>("");
   const [expDate, setExpDate] = useState<string>("");
@@ -90,55 +83,81 @@ export function CreateCardModel(): JSX.Element {
     });
   };
 
-  const cardNoChangeHandler = (event: ChangeEvent<HTMLInputElement>): void => {
+  const cardNoChangeHandler = (event: ChangeEvent<HTMLInputElement>): null => {
     const cardNoValue = event.target.value;
     // check if string contains only numbers
     if (
       !cardNoValue.length ||
       (cardNoValue.length < 17 && cardNoValue.match(/^\d+$/))
     ) {
-      console.info("1");
-      return setCardNo(cardNoValue);
+      setCardNo(cardNoValue);
     }
-    return setCardNo((prevCardNo) => prevCardNo);
+    return null;
   };
-  const cvvChangeHandler = (event: ChangeEvent<HTMLInputElement>): void => {
-    return setCvv((prevCvv) => {
-      const cvvValue = event.target.value;
-      // check if string contains only numbers
-      if (
-        !cvvValue.length ||
-        (cvvValue.length < 4 && cvvValue.match(/^\d+$/))
-      ) {
-        return cvvValue;
-      }
-      return prevCvv;
-    });
+
+  const amountChangeHandler = (event: ChangeEvent<HTMLInputElement>): null => {
+    const amountValue = event.target.value;
+    console.log(amountValue, !amountValue.length, amountValue.match(/^\d+$/));
+    // check if string contains only numbers
+    if (!amountValue.length || amountValue.match(/^\d+$/)) {
+      setAmount(amountValue);
+    }
+    return null;
+  };
+
+  const cvvChangeHandler = (event: ChangeEvent<HTMLInputElement>): null => {
+    const cvvValue = event.target.value;
+    // check if string contains only numbers
+    if (!cvvValue.length || (cvvValue.length < 4 && cvvValue.match(/^\d+$/))) {
+      setCvv(cvvValue);
+    }
+    return null;
   };
 
   // submission handler
-  const submitHandler = (): void => {
+  const submitHandler = async (): Promise<void> => {
     setIsLoading(true);
-    const { name, email, phone, line1, city, district, postalCode, country } =
-      userDetails;
-    const cardDetails = {
-      cardNo,
-      cvv,
-      expDate,
-    };
-    const data = {
-      name,
-      email,
-      phone,
-      line1,
-      city,
-      district,
-      postalCode,
-      country,
-      cardNo,
-      cvv,
-      expDate,
-    };
+    try {
+      const cardDetails = {
+        number: "4007400000000007",
+        cvv: "123",
+      };
+      const payload: CreateCardPayload = {
+        idempotencyKey: uuid(),
+        expMonth: 1,
+        expYear: 2025,
+        keyId: "",
+        encryptedData: "",
+        billingDetails: {
+          line1: "Test",
+          line2: "",
+          city: "Test City",
+          district: "MA",
+          postalCode: "11111",
+          country: "US",
+          name: "Customer 0001",
+        },
+        metadata: {
+          phoneNumber: "+12025550180",
+          email: "customer-0001@circle.com",
+          sessionId: "xxx",
+          ipAddress: "172.33.222.1",
+        },
+      };
+      const publicKey = await getPCIPublicKey();
+
+      const encryptedData = await openPGPEncryption(cardDetails, publicKey);
+      const { encryptedMessage, keyId } = encryptedData;
+
+      payload.keyId = keyId;
+      payload.encryptedData = encryptedMessage;
+
+      const cardRes = await createCard(payload);
+      console.log(cardRes.data);
+    } catch (error) {
+      console.log(error);
+    }
+    return setIsLoading(false);
   };
 
   const isDisabled =
@@ -151,6 +170,7 @@ export function CreateCardModel(): JSX.Element {
         cursor="pointer"
         transition="0.2s all ease"
         m="0"
+        w="100%"
         justifyContent="flex-start"
         borderRadius="0"
         bg="gray.700"
@@ -169,7 +189,19 @@ export function CreateCardModel(): JSX.Element {
           <ModalCloseButton />
           <ModalBody pb={6}>
             <form>
-              <FormControl mt="2">
+              <FormControl m="1rem 0">
+                <InputGroup>
+                  <InputLeftAddon>$</InputLeftAddon>
+                  <Input
+                    ref={initialRef}
+                    placeholder="Amount"
+                    type="text"
+                    value={amount}
+                    onChange={amountChangeHandler}
+                  />
+                </InputGroup>
+              </FormControl>
+              <FormControl m="0">
                 <InputGroup>
                   <Input
                     ref={initialRef}
@@ -185,7 +217,7 @@ export function CreateCardModel(): JSX.Element {
                 </InputGroup>
               </FormControl>
               <Flex>
-                <FormControl mt="7" mr="1.2rem">
+                <FormControl mt="1rem" mr="1.2rem">
                   <InputGroup>
                     <Input
                       placeholder="mm/yy"
@@ -200,7 +232,7 @@ export function CreateCardModel(): JSX.Element {
                   </InputGroup>
                 </FormControl>
 
-                <FormControl mt="7">
+                <FormControl mt="1rem">
                   <InputGroup>
                     <Input
                       maxLength={3}

@@ -24,6 +24,22 @@
   "rules": {
     "no-use-before-define": "off",
     "@typescript-eslint/no-use-before-define": ["error"],
+    "@typescript-eslint/ban-types": [
+      "warn",
+      {
+        "types": {
+          "String": false,
+          "Boolean": false,
+          "Number": false,
+          "Symbol": false,
+          "{}": false,
+          "Object": false,
+          "object": false,
+          "Function": false
+        },
+        "extendDefaults": true
+      }
+    ],
     "react/react-in-jsx-scope": "off",
     "react/jsx-filename-extension": ["warn", { "extensions": [".tsx", ".ts"] }],
     "import/extensions": [

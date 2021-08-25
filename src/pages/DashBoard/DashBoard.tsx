@@ -1,28 +1,30 @@
 import { Box, Flex, Heading, VStack, Text } from "@chakra-ui/react";
-import { CreateCardModel } from "../../components/CreateCardModel/CreateCardModel";
+import { CreateCardModal } from "../../components/CreateCardModal/CreateCardModal";
 import { AssetContainer } from "../../components/AssetContainer/AssetContainer";
 import { Layout } from "../../components/Layout/Layout";
 import { PayModel } from "../../components/PayModel/PayModel";
 import { Sidebar } from "../../components/Sidebar/Sidebar";
 import { ButtonList } from "./Dashboard.types";
+import { MakeTransfer } from "../../components";
 
 export default function DashBoard(): JSX.Element {
   const buttonList: ButtonList[] = [
     {
       component: (
         <>
-          <CreateCardModel />
+          <CreateCardModal />
         </>
       ),
     },
     {
       component: (
         <>
-          <CreateCardModel />
+          <MakeTransfer />
         </>
       ),
     },
   ];
+
   return (
     <Layout>
       <Flex flexDir="column" align="center" width="100%">
