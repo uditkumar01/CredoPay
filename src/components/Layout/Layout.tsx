@@ -4,12 +4,13 @@ import { Navbar } from "../Navbar/Navbar";
 
 interface LayoutProps {
   children: ReactNode;
+  noNavbar?: boolean;
 }
 
-export function Layout({ children }: LayoutProps): JSX.Element {
+export function Layout({ children, noNavbar }: LayoutProps): JSX.Element {
   return (
     <Flex flexDirection="column" bg="black.1000">
-      <Navbar />
+      {!noNavbar && <Navbar />}
       {children}
     </Flex>
   );

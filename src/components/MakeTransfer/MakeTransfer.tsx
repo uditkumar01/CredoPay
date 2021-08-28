@@ -23,6 +23,13 @@ import {
   Select,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { v4 } from "uuid";
+import {
+  BlockchainTransfer,
+  transfer,
+  TransferPayload,
+  WalletTrasfer,
+} from "../../lib/transferApi";
 
 function Field({
   name,
@@ -52,6 +59,7 @@ function Field({
           {leftAddOn && <InputLeftAddon>{leftAddOn}</InputLeftAddon>}
           <Input
             name={name}
+            value={value}
             placeholder={placeHolder}
             onChange={handleChange}
           />
@@ -68,8 +76,41 @@ export function MakeTransfer(): JSX.Element {
   const [amount, setAmount] = useState("");
   const [chainType, setChainType] = useState("ETH");
   const [currency, setCurrency] = useState("USD");
+  const [isWallet, setIsWallet] = useState(true);
 
-  function handleSubmit(): void {}
+  async function handleSubmit(): Promise<null> {
+    let destination: BlockchainTransfer | WalletTrasfer = {
+      type: "blockchain",
+      address: "",
+      chain: "",
+    };
+
+    if (isWallet) {
+      destination = {
+        type: "wallet",
+        id: receiverAddress,
+      };
+    } else {
+      destination = {
+        type: "blockchain",
+        address: receiverAddress,
+        chain: chainType,
+      };
+    }
+    // "1000128582"
+    const payload: TransferPayload = {
+      source: { type: "wallet", id: senderAddress },
+      destination,
+      amount: { amount, currency },
+      idempotencyKey: v4(),
+    };
+
+    // console.log(payload);
+    const res = await transfer(payload);
+
+    console.log(res);
+    return null;
+  }
 
   return (
     <>
@@ -145,7 +186,7 @@ export function MakeTransfer(): JSX.Element {
                 overflow="hidden"
                 w="100%"
               >
-                <Tabs isFitted>
+                <Tabs isFitted onChange={(e) => setIsWallet(e === 0)}>
                   <TabList>
                     <Tab _focus={{ outline: "none" }}>Wallet</Tab>
                     <Tab _focus={{ outline: "none" }}>Blockchain</Tab>

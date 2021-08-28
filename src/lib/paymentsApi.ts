@@ -1,9 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import * as dotenv from "dotenv";
-import {
-  BasePaymentPayload,
-  CreateCardPayload,
-} from "../components/CreateCardModal/CreateCardModal.types";
+import { BasePaymentPayload } from "../components/CreateCardModal/CreateCardModal.types";
 
 dotenv.config();
 

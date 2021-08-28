@@ -18,7 +18,18 @@ import {
 import QrReader from "react-qr-reader";
 import { useRef, useState } from "react";
 
-export function PayModel(): JSX.Element {
+export function PayModel({
+  btnStyles,
+}: {
+  btnStyles: {
+    [key: string]:
+      | string
+      | Array<string>
+      | {
+          [key: string]: string;
+        };
+  };
+}): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef(null);
 
@@ -36,7 +47,7 @@ export function PayModel(): JSX.Element {
 
   return (
     <DarkMode>
-      <Button ref={btnRef} onClick={onOpen} variant="outline" minW="150px">
+      <Button ref={btnRef} onClick={onOpen} {...btnStyles}>
         Pay Now
       </Button>
 

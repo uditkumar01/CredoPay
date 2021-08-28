@@ -4,15 +4,21 @@ import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
 import * as serviceWorker from "./serviceWorker";
-import { App } from "./components/App/App";
+import App from "./App/App";
 import { theme } from "./theme";
+import { StaticDataContextProvider } from "./context/StaticData/StaticData";
+import { HistoryDataContextProvider } from "./context/HistoryData/HistoryData";
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <ChakraProvider resetCSS theme={theme}>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-        <App />
+        <StaticDataContextProvider>
+          <HistoryDataContextProvider>
+            <App />
+          </HistoryDataContextProvider>
+        </StaticDataContextProvider>
       </ChakraProvider>
     </Router>
   </React.StrictMode>,

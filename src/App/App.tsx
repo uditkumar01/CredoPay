@@ -1,7 +1,7 @@
 import "./App.css";
-import AllRoutes from "../../pages";
+import AllRoutes from "../pages";
 
-export function App(): JSX.Element {
+export default function App(): JSX.Element {
   return (
     <div className="app">
       <AllRoutes />

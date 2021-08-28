@@ -7,12 +7,12 @@ dotenv.config();
 const AUTH_KEY = process.env.REACT_APP_AUTH_KEY;
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 
-const nullIfEmpty = (prop: string | undefined): string | undefined => {
-  if (prop !== undefined && prop.trim() === "") {
-    return undefined;
-  }
-  return prop;
-};
+// const nullIfEmpty = (prop: string | undefined): string | undefined => {
+//   if (prop !== undefined && prop.trim() === "") {
+//     return undefined;
+//   }
+//   return prop;
+// };
 
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
