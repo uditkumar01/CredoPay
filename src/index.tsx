@@ -8,17 +8,20 @@ import App from "./App/App";
 import { theme } from "./theme";
 import { StaticDataContextProvider } from "./context/StaticData/StaticData";
 import { HistoryDataContextProvider } from "./context/HistoryData/HistoryData";
+import { AuthProvider } from "./context/AuthContext/AuthContext";
 
 ReactDOM.render(
   <React.StrictMode>
     <Router>
       <ChakraProvider resetCSS theme={theme}>
         <ColorModeScript initialColorMode={theme.config.initialColorMode} />
-        <StaticDataContextProvider>
-          <HistoryDataContextProvider>
-            <App />
-          </HistoryDataContextProvider>
-        </StaticDataContextProvider>
+        <AuthProvider>
+          <StaticDataContextProvider>
+            <HistoryDataContextProvider>
+              <App />
+            </HistoryDataContextProvider>
+          </StaticDataContextProvider>
+        </AuthProvider>
       </ChakraProvider>
     </Router>
   </React.StrictMode>,

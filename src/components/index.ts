@@ -22,3 +22,4 @@ export { Timeline } from "./Timeline/Timeline";
 export { TimelineList } from "./TimelineList/TimelineList";
 export { TimelineListItem } from "./TimelineListItem/TimelineListItem";
 export { TimelineBox } from "./TimelineBox/TimelineBox";
+export { CreateWalletModal } from "./CreateWalletModal/CreateWalletModal";

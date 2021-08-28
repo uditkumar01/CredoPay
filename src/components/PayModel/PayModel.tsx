@@ -16,20 +16,19 @@ import {
   DarkMode,
 } from "@chakra-ui/react";
 import QrReader from "react-qr-reader";
-import { useRef, useState } from "react";
+import { ReactElement, useRef, useState } from "react";
 
-export function PayModel({
-  btnStyles,
-}: {
-  btnStyles: {
-    [key: string]:
-      | string
-      | Array<string>
-      | {
-          [key: string]: string;
-        };
-  };
-}): JSX.Element {
+export interface BtnStyles {
+  [key: string]:
+    | string
+    | Array<string>
+    | ReactElement
+    | {
+        [key: string]: string;
+      };
+}
+
+export function PayModel({ btnStyles }: { btnStyles: BtnStyles }): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef(null);
 

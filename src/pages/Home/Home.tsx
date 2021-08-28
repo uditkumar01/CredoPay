@@ -11,10 +11,14 @@ import {
   IconButton,
   IconProps,
   useColorModeValue,
+  Center,
 } from "@chakra-ui/react";
-import { FaEthereum } from "react-icons/all";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { FaEthereum, FcGoogle } from "react-icons/all";
+import { CreateWalletModal } from "../../components";
 import { Layout } from "../../components/Layout/Layout";
+import useAuth from "../../context/AuthContext/AuthContext";
+import { auth, firestore } from "../../Firebase";
 
 /* eslint-disable max-len */
 
@@ -40,6 +44,31 @@ export const Blob = (props: IconProps): JSX.Element => {
 /* eslint-enable max-len */
 
 export default function Home(): JSX.Element {
+  const {
+    signIn,
+    authState: { isLoggedIn },
+  } = useAuth();
+  const [btnLoading, setBtnLoading] = useState(false);
+  // get user from firestore using email
+  // useEffect(() => {
+  //   const email = auth()?.currentUser?.email;
+  //   if (email) {
+  //     console.log(email);
+  //     (async () => {
+  //       const userRef = firestore().collection("users");
+  //       // getting user if his email is found in firestore
+  //       const snapshot = await userRef.where("email", "==", email).get();
+  //       const user = snapshot.docs[0].data();
+
+  //       // updating user doc in firestore
+  //       // userRef.doc(user.uid).update({
+  //       //   wallet: undefined,
+  //       // });
+
+  //       console.log(user, "hi");
+  //     })();
+  //   }
+  // });
   return (
     <Layout>
       <Container maxW="7xl">
@@ -87,34 +116,47 @@ export default function Home(): JSX.Element {
               spacing={{ base: 4, sm: 6 }}
               direction={{ base: "column", sm: "row" }}
             >
-              <Link to="/create-wallet">
+              {!isLoggedIn ? (
                 <Button
-                  rounded="full"
+                  w="full"
+                  maxW="350px"
+                  variant="outline"
+                  leftIcon={<FcGoogle />}
                   size="lg"
-                  fontWeight="normal"
-                  px={6}
-                  colorScheme="teal"
-                  bg="blue.400"
-                  _hover={{ bg: "blue.500" }}
-                >
-                  Create Account
-                </Button>
-              </Link>
-              <Link to="/login">
-                <Button
+                  colorScheme="blue"
                   rounded="full"
-                  size="lg"
-                  fontWeight="normal"
-                  bg="brand.500"
-                  color="black.1000"
-                  px={6}
-                  leftIcon={<FaEthereum style={{ color: "#3278b3" }} />}
-                  _hover={{ bg: "brand.200" }}
-                  _active={{ bg: "brand.200" }}
+                  isLoading={btnLoading}
+                  onClick={() => {
+                    setBtnLoading(true);
+                    try {
+                      signIn();
+                    } catch (e) {
+                      console.log(e);
+                    }
+                    setBtnLoading(false);
+                  }}
                 >
-                  Login
+                  <Center>
+                    <Text>Sign in with Google</Text>
+                  </Center>
                 </Button>
-              </Link>
+              ) : (
+                <CreateWalletModal
+                  btnStyles={{
+                    w: "full",
+                    maxW: "350px",
+                    variant: "outline",
+                    size: "lg",
+                    colorScheme: "blue",
+                    rounded: "full",
+                    leftIcon: <Image src="/svgs/logo.svg" h="26px" />,
+                  }}
+                >
+                  <Center>
+                    <Text>Create your Wallet</Text>
+                  </Center>
+                </CreateWalletModal>
+              )}
             </Stack>
           </Stack>
           <Flex

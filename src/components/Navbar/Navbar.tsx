@@ -58,18 +58,6 @@ export function Navbar(): JSX.Element {
             </chakra.h1>
           </Flex>
           <HStack display="flex" alignItems="center" spacing={1}>
-            <HStack
-              spacing={1}
-              mr={1}
-              color="brand.500"
-              display={{ base: "none", md: "inline-flex" }}
-            >
-              <Link to="/login">
-                <Button color="brand.500" variant="ghost">
-                  Login
-                </Button>
-              </Link>
-            </HStack>
             <Link to="/create-wallet">
               <Button
                 colorScheme="teal"
@@ -78,7 +66,7 @@ export function Navbar(): JSX.Element {
                 _hover={{ bg: "brand.600" }}
                 size="sm"
               >
-                Create Wallet
+                About Us
               </Button>
             </Link>
             <Box display={{ base: "inline-flex", md: "none" }}>

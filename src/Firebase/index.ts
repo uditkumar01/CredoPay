@@ -1,6 +1,9 @@
-import * as firebase from "firebase/app";
+/* eslint-disable import/no-duplicates */
+import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
+/* eslint-enable import/no-duplicates */
+
 // import "firebase/analytics";
 
 // Your web app's Firebase configuration
@@ -19,7 +22,6 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 
-// export const auth = firebase.auth;
-// export const firestore = firebase.firestore;
+const { auth, firestore } = firebase;
 
-export default firebase;
+export { firebase, auth, firestore };

@@ -5,8 +5,7 @@ import {
   useEffect,
   useReducer,
 } from "react";
-import { User } from "firebase/auth";
-import { auth } from "../../Firebase/Firebase";
+import { auth, firebase } from "../../Firebase";
 import { createUserEntity } from "../../Firebase/User";
 import { authReducer } from "./AuthReducer";
 import {
@@ -18,11 +17,11 @@ import {
 const AuthContext = createContext<AuthContextValue>({} as AuthContextValue);
 
 const signIn = (): SignInOutResType => {
-  const provider = new auth.GoogleAuthProvider();
+  const provider = new firebase.auth.GoogleAuthProvider();
 
   auth()
     .signInWithPopup(provider)
-    .catch((err: any) => {
+    .catch((err) => {
       console.log("signIn error", err.message, err);
       return { error: "something went wrong", success: false };
     });
@@ -33,7 +32,7 @@ const signOut = (): SignInOutResType => {
   if (auth().currentUser) {
     auth()
       .signOut()
-      .catch((err: any) => {
+      .catch((err) => {
         console.log("signOut error", err.message, err);
         return { error: "something went wrong", success: false };
       });
@@ -41,11 +40,15 @@ const signOut = (): SignInOutResType => {
   return { success: true };
 };
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element {
   const initialState: AuthInitialStateType = { isLoggedIn: false };
   const [authState, authDispatch] = useReducer(authReducer, initialState);
   useEffect(() => {
-    const observer = auth().onAuthStateChanged(function (user: User) {
+    const observer = auth().onAuthStateChanged(function (user) {
       if (user) {
         authDispatch({
           type: "LOGIN",
@@ -77,6 +80,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export default function useAuthContext() {
+export default function useAuth(): AuthContextValue {
   return useContext(AuthContext) as AuthContextValue;
 }
