@@ -16,19 +16,19 @@ import {
   Icon,
   IconProps,
   useToast,
+  IconButton,
+  HStack,
 } from "@chakra-ui/react";
-import { ReactElement } from "react";
 import { RiAccountPinBoxFill } from "react-icons/ri";
 import { NavItem } from "..";
 import useAuth from "../../context/AuthContext/AuthContext";
+import { TotalBalances } from "../../context/AuthContext/AuthReducer.types";
 import {
   useStaticData,
   Wallet,
   WalletBalance,
 } from "../../context/StaticData/StaticData";
-import { auth } from "../../Firebase";
 import { formatFullName } from "../../utils/formatName";
-import { TotalBalances } from "../CryptoStatCard/CryptoStatCard";
 import { BtnStyles } from "../PayModel/PayModel";
 
 export const Blob = (props: IconProps): JSX.Element => {
@@ -55,56 +55,22 @@ export function AccountModal({
   navBtn,
 }: {
   btnStyles?: BtnStyles;
-  icon?: ReactElement;
   navBtn?: boolean;
 }): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { authState } = useAuth();
   const toast = useToast();
-  const { userWallets, cryptoData } = useStaticData();
-  // get total balance of all wallets for all currencies
 
-  let totalBalances: TotalBalances | null = null;
-  if (userWallets && userWallets.length > 0) {
-    totalBalances = userWallets.reduce(
-      (acc: TotalBalances, wallet: Wallet) => {
-        wallet.balances.forEach((balance: WalletBalance) => {
-          acc[balance.currency as keyof TotalBalances] += Number(
-            balance.amount
-          );
-        });
-        return acc;
-      },
-      {
-        USDC: 0,
-        BTC: 0,
-        ETH: 0,
-        SOL: 0,
-      } as TotalBalances
-    );
-  }
-
-  let totalBalance = 0;
-  if (totalBalances) {
-    // calculate total balance and round to 2 decimal places
-    totalBalance = cryptoData.reduce((acc: number, currency) => {
-      const tot =
-        acc +
-        (totalBalances
-          ? totalBalances[currency.symbol as keyof TotalBalances] *
-            currency.value
-          : 0);
-      return tot;
-    }, 0);
-
-    totalBalance = Math.round(totalBalance * 100) / 100;
-  }
   return (
     <>
       {!navBtn ? (
-        <Button onClick={onOpen} {...btnStyles}>
-          Account Info
-        </Button>
+        <IconButton onClick={onOpen} aria-label="user-image" rounded="full">
+          <Avatar
+            name={authState?.user?.displayName || ""}
+            size="sm"
+            src={authState?.user?.photoURL || ""}
+          />
+        </IconButton>
       ) : (
         <Button
           variant="unstyled"
@@ -167,18 +133,33 @@ export function AccountModal({
                   <Heading fontSize="2xl" fontWeight={500} fontFamily="body">
                     {formatFullName(authState?.user?.displayName || "")}
                   </Heading>
-                  <Text
-                    as={Badge}
-                    bg="teal.900"
-                    color="brand.500"
-                    fontSize="md"
-                    textTransform="none"
-                  >
-                    @{authState?.user?.credTag}
-                  </Text>
+                  <HStack>
+                    <Text
+                      as={Badge}
+                      bg="teal.900"
+                      color="brand.500"
+                      fontSize="sm"
+                      textTransform="none"
+                      p="0.2rem 0.5rem"
+                      rounded="full"
+                    >
+                      @{authState?.user?.credTag}
+                    </Text>
+                    <Text
+                      as={Badge}
+                      fontSize="sm"
+                      bg="blue.900"
+                      color="brand.500"
+                      textTransform="none"
+                      p="0.2rem 0.5rem"
+                      rounded="full"
+                    >
+                      {authState?.user?.walletId}
+                    </Text>
+                  </HStack>
                 </Stack>
                 <Stack spacing={0} align="center" mb={5}>
-                  <Heading>${totalBalance.toFixed(2)}</Heading>
+                  <Heading>${authState.balance.toFixed(2)}</Heading>
                 </Stack>
                 <Stack direction="row" justify="center" spacing={6}>
                   <Stack
@@ -192,7 +173,7 @@ export function AccountModal({
                     mb="1.2rem"
                   >
                     <Text fontWeight={600} fontSize="1.3rem">
-                      23k
+                      {authState?.assets && authState.assets?.BTC?.toFixed(2)}
                     </Text>
                     <Text
                       minW="50px"
@@ -201,7 +182,7 @@ export function AccountModal({
                       fontSize="sm"
                       color="gray.500"
                     >
-                      USDC
+                      BTC
                     </Text>
                   </Stack>
                   <Stack
@@ -214,7 +195,7 @@ export function AccountModal({
                     justify="center"
                   >
                     <Text fontWeight={600} fontSize="1.3rem">
-                      23k
+                      {authState?.assets && authState?.assets?.ETH?.toFixed(2)}
                     </Text>
                     <Text
                       minW="50px"
@@ -223,7 +204,7 @@ export function AccountModal({
                       fontSize="sm"
                       color="gray.500"
                     >
-                      USDC
+                      ETH
                     </Text>
                   </Stack>
                 </Stack>
@@ -233,34 +214,12 @@ export function AccountModal({
                     align="center"
                     bg={useColorModeValue("#151f21", "gray.900")}
                     height="90px"
-                    flex="1"
+                    minW="150px"
                     rounded="md"
                     justify="center"
                   >
                     <Text fontWeight={600} fontSize="1.3rem">
-                      23k
-                    </Text>
-                    <Text
-                      minW="50px"
-                      textAlign="center"
-                      as={Badge}
-                      fontSize="sm"
-                      color="gray.500"
-                    >
-                      USDC
-                    </Text>
-                  </Stack>
-                  <Stack
-                    spacing={1}
-                    align="center"
-                    bg={useColorModeValue("#151f21", "gray.900")}
-                    height="90px"
-                    flex="1"
-                    rounded="md"
-                    justify="center"
-                  >
-                    <Text fontWeight={600} fontSize="1.3rem">
-                      23k
+                      {authState?.assets && authState?.assets?.USDC?.toFixed(2)}
                     </Text>
                     <Text
                       minW="50px"
@@ -284,6 +243,36 @@ export function AccountModal({
                     toast({
                       title: "Copied Successfully",
                       description:
+                        "Your Wallet Id has been copied to your clipboard",
+                      status: "success",
+                      duration: 4000,
+                      isClosable: true,
+                    });
+                    navigator.clipboard.writeText(
+                      authState?.user?.walletId || ""
+                    );
+                    onClose();
+                  }}
+                  _focus={{
+                    outline: "none",
+                  }}
+                  _hover={{
+                    transform: "translateY(-2px)",
+                    boxShadow: "lg",
+                  }}
+                >
+                  Copy Wallet ID
+                </Button>
+                <Button
+                  w="full"
+                  mt={4}
+                  bg="brand.800"
+                  color="white"
+                  rounded="md"
+                  onClick={() => {
+                    toast({
+                      title: "Copied Successfully",
+                      description:
                         "Your CredTag has been copied to your clipboard",
                       status: "success",
                       duration: 4000,
@@ -292,6 +281,7 @@ export function AccountModal({
                     navigator.clipboard.writeText(
                       authState?.user?.credTag || ""
                     );
+                    onClose();
                   }}
                   _focus={{
                     outline: "none",

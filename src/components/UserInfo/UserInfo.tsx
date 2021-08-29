@@ -8,13 +8,8 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import {
-  useStaticData,
-  Wallet,
-  WalletBalance,
-} from "../../context/StaticData/StaticData";
+import useAuth from "../../context/AuthContext/AuthContext";
 import { AddFunds } from "../AddFunds/AddFunds";
-import { TotalBalances } from "../CryptoStatCard/CryptoStatCard";
 import { PayModel } from "../PayModel/PayModel";
 
 interface DescriptionProps extends StackProps {
@@ -22,66 +17,10 @@ interface DescriptionProps extends StackProps {
   children: React.ReactNode;
 }
 
-const Description = (props: DescriptionProps): JSX.Element => {
-  const { title, children, ...rest } = props;
-  return (
-    <Stack as="dl" spacing="1" {...rest}>
-      <Text
-        as="dt"
-        fontWeight="bold"
-        fontSize="xs"
-        casing="uppercase"
-        color="gray.500"
-        whiteSpace="nowrap"
-      >
-        {title}
-      </Text>
-      <Text fontSize="sm" fontWeight="medium">
-        {children}
-      </Text>
-    </Stack>
-  );
-};
-
 export const UserInfo = (): JSX.Element => {
-  const { userWallets, cryptoData } = useStaticData();
-  // get total balance of all wallets for all currencies
-
-  let totalBalances: TotalBalances | null = null;
-  if (userWallets && userWallets.length > 0) {
-    totalBalances = userWallets.reduce(
-      (acc: TotalBalances, wallet: Wallet) => {
-        wallet.balances.forEach((balance: WalletBalance) => {
-          acc[balance.currency as keyof TotalBalances] += Number(
-            balance.amount
-          );
-        });
-        return acc;
-      },
-      {
-        USDC: 0,
-        BTC: 0,
-        ETH: 0,
-        SOL: 0,
-      } as TotalBalances
-    );
-  }
-
-  let totalBalance = 0;
-  if (totalBalances) {
-    // calculate total balance and round to 2 decimal places
-    totalBalance = cryptoData.reduce((acc: number, currency) => {
-      const tot =
-        acc +
-        (totalBalances
-          ? totalBalances[currency.symbol as keyof TotalBalances] *
-            currency.value
-          : 0);
-      return tot;
-    }, 0);
-
-    totalBalance = Math.round(totalBalance * 100) / 100;
-  }
+  const {
+    authState: { balance },
+  } = useAuth();
   return (
     <Flex
       bgImage="/images/cardImage.webp"
@@ -120,7 +59,7 @@ export const UserInfo = (): JSX.Element => {
             color="whiteAlpha.900"
             textAlign={{ base: "center", md: "left" }}
           >
-            {!totalBalance ? "0.00" : totalBalance.toFixed(2)}
+            {!balance ? "0.00" : balance.toFixed(2)}
           </Heading>
         </Flex>
       </Box>

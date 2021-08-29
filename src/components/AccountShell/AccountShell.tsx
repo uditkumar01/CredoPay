@@ -7,13 +7,7 @@ import {
   Stack,
   useColorModeValue as mode,
 } from "@chakra-ui/react";
-import * as React from "react";
-import {
-  BiHome,
-  BiTransferAlt,
-  BiNews,
-  HiOutlineLogout,
-} from "react-icons/all";
+import { BiHome, HiOutlineLogout } from "react-icons/all";
 import {
   Logo,
   ScrollArea,
@@ -117,11 +111,7 @@ export const AccountShell = (): JSX.Element => {
                   <MobileMenuButton onClick={toggle} isOpen={isOpen} />
                   <NavBreadcrumb />
                 </Flex>
-                <Avatar
-                  name="Dan Abrahmov"
-                  size="sm"
-                  src={authState?.user?.photoURL || ""}
-                />
+                <AccountModal />
               </Flex>
               <Flex
                 w="full"

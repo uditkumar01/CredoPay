@@ -8,6 +8,7 @@ import {
 } from "react";
 import { firestore } from "../../Firebase";
 import { getBlockchainAddresses } from "../../lib/getCryptoAddresses";
+import { getWallets } from "../../lib/getWallets";
 import useAuth from "../AuthContext/AuthContext";
 import { AuthUserType } from "../AuthContext/AuthContext.types";
 // import { getWallets } from "../../lib/getWallets";
@@ -129,16 +130,13 @@ export function StaticDataContextProvider({
   );
   const { authState, showLoadingScreen } = useAuth();
 
-  function getUserWallets(): any {
-    return [
-      {
-        walletId: authState.user?.walletId,
-        entityId: authState.user?.entityId,
-        type: authState.user?.type,
-        description: authState.user?.description,
-        balances: authState.user?.balances,
-      },
-    ];
+  async function getUserWallets(): Promise<any> {
+    const resUserWallets = await getWallets();
+    console.log("resUserWallets", resUserWallets);
+    // find current user wallets
+    return resUserWallets?.filter(
+      (wallet: Wallet) => wallet?.walletId === authState?.user?.walletId
+    );
   }
 
   useEffect(() => {

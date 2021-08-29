@@ -18,5 +18,5 @@ const axiosInstance = axios.create({
 export async function getWallets(): Promise<any> {
   const url = "/v1/wallets";
   const response = await axiosInstance.get(url);
-  return response.data;
+  return response.data?.data;
 }

@@ -9,6 +9,8 @@ import {
 } from "@chakra-ui/react";
 import { MdAccountBalanceWallet } from "react-icons/md";
 import { CryptoIndicator } from "..";
+import useAuth from "../../context/AuthContext/AuthContext";
+import { TotalBalances } from "../../context/AuthContext/AuthReducer.types";
 import {
   useStaticData,
   Wallet,
@@ -31,13 +33,6 @@ export interface CryptoStatCardProps {
   };
 }
 
-export interface TotalBalances {
-  USDC: number;
-  BTC: number;
-  ETH: number;
-  SOL: number;
-}
-
 function format(value: number): string {
   return new Intl.NumberFormat("en-US", {
     style: "decimal",
@@ -52,28 +47,10 @@ export const CryptoStatCard = ({
 }: CryptoStatCardProps): JSX.Element => {
   const { label, currency, change, symbol } = data;
   const isNegative = change.percent < 0;
-  const { userWallets } = useStaticData();
+  const {
+    authState: { assets },
+  } = useAuth();
   // get total balance of all wallets for all currencies
-
-  let totalBalances: TotalBalances | null = null;
-  if (userWallets && userWallets.length > 0) {
-    totalBalances = userWallets.reduce(
-      (acc: TotalBalances, wallet: Wallet) => {
-        wallet.balances.forEach((balance: WalletBalance) => {
-          acc[balance.currency as keyof TotalBalances] += Number(
-            balance.amount
-          );
-        });
-        return acc;
-      },
-      {
-        USDC: 0,
-        BTC: 0,
-        ETH: 0,
-        SOL: 0,
-      } as TotalBalances
-    );
-  }
 
   return (
     <Box
@@ -107,8 +84,7 @@ export const CryptoStatCard = ({
           color="cyan.600"
           mr={2}
         />
-        {totalBalances &&
-          format(totalBalances[symbol as keyof TotalBalances] ?? 0)}
+        {assets && format(assets[symbol as keyof TotalBalances] ?? 0)}
       </Heading>
       <Flex
         justify="space-between"
@@ -121,10 +97,10 @@ export const CryptoStatCard = ({
           <Text>
             {currency}
             {format(
-              roundOff(change?.percent ? Number(change.percent) : 0, 2)
+              roundOff(change?.percent ? Number(change.percent) : 0, 1)
             )}{" "}
             ({isNegative ? "" : "+"}
-            {roundOff(change?.percent ? Number(change.percent) : 0, 2)}%)
+            {roundOff(change?.percent ? Number(change.percent) : 0, 1)}%)
           </Text>
         </HStack>
         <Text color="gray.400">{symbol}</Text>

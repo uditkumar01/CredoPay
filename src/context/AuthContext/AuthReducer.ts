@@ -16,6 +16,16 @@ export function authReducer(
         ...state,
         user: action.payload,
       };
+    case "BALANCE":
+      return {
+        ...state,
+        balance: action.payload,
+      };
+    case "ASSETS":
+      return {
+        ...state,
+        assets: action.payload,
+      };
     default:
       return state;
   }

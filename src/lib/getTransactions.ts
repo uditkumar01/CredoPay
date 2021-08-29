@@ -32,19 +32,21 @@ export async function getTransactions(
 ): Promise<any> {
   try {
     const response = await axiosInstance.get("/v1/transfers");
+    console.log(response.data?.data);
     const filteredHistoryData = response?.data?.data?.filter(
       (transaction: Transaction) => {
+        let checkFlag = false;
         if (transaction.source.type === "wallet") {
-          return transaction.source.id === walletId;
+          checkFlag = transaction.source.id === walletId;
         }
-        if (transaction.destination.type === "wallet") {
+        if (!checkFlag && transaction.destination.type === "wallet") {
           return transaction.destination.id === walletId;
         }
-        if (transaction.source.type === "blockchain") {
+        if (!checkFlag && transaction.source.type === "blockchain") {
           const hashAdd = transaction.source.address;
           return cryptoAccounts.some((item) => item.address === hashAdd);
         }
-        if (transaction.destination.type === "blockchain") {
+        if (!checkFlag && transaction.destination.type === "blockchain") {
           const hashAdd = transaction.destination.address;
           return cryptoAccounts.some((item) => item.address === hashAdd);
         }

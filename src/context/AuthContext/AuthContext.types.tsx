@@ -1,6 +1,6 @@
 import { Dispatch } from "react";
 import { WalletBalance } from "../StaticData/StaticData";
-import { AuthActionType } from "./AuthReducer.types";
+import { AuthActionType, TotalBalances } from "./AuthReducer.types";
 
 export interface AuthUserType {
   uid: string;
@@ -17,6 +17,8 @@ export interface AuthUserType {
 export interface AuthInitialStateType {
   isLoggedIn: boolean;
   user?: AuthUserType;
+  balance: number;
+  assets: TotalBalances;
 }
 
 export interface SignInOutResType {

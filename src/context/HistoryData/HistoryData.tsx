@@ -53,13 +53,20 @@ function historyDataReducer(
   state: HistoryDataInitialState,
   action: HistoryDataReducerAction
 ): HistoryDataInitialState {
-  console.log("historyDataReducer", action);
-  const newHistoryItem = [...state.transactionsHistory].splice(1);
+  const newHistoryItem = [...state.transactionsHistory];
+  let newTransaction;
+  let restTransactions;
   switch (action.type) {
     case "SET_HISTORY_DATA":
       return { ...state, ...action.payload };
     case "ADD_HISTORY_ITEM":
-      newHistoryItem.unshift(action.payload.transactionsHistory[0]);
+      [newTransaction, ...restTransactions] =
+        action.payload.transactionsHistory;
+      if (newTransaction.id === state.transactionsHistory[0].id) {
+        // poping the first item
+        newHistoryItem.shift();
+      }
+      newHistoryItem.unshift(newTransaction);
       return {
         ...state,
         transactionsHistory: newHistoryItem,

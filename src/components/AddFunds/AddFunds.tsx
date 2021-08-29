@@ -17,10 +17,18 @@ import {
   FormControl,
   Select,
   Flex,
+  useToast,
+  Table,
+  Tbody,
+  Td,
+  Th,
+  Thead,
+  Tr,
+  Badge,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiMessageAltAdd } from "react-icons/bi";
-import QRCode from "react-qr-code";
+import QRCode from "qrcode.react";
 import { useStaticData } from "../../context/StaticData/StaticData";
 import { NavItem } from "../NavItem/NavItem";
 
@@ -78,8 +86,21 @@ export function AddFunds({
 }): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [blockChainAddress, setBlockChainAddress] = useState("");
+  const [chain, setChain] = useState("");
+  const [currency, setCurrency] = useState("");
   const { cryptoAccounts } = useStaticData();
+  const toast = useToast();
 
+  useEffect(() => {
+    if (cryptoAccounts) {
+      const firstAddress = cryptoAccounts[0].address;
+      const firstChain = cryptoAccounts[0].chain;
+      const firstCurrency = cryptoAccounts[0].currency;
+      setBlockChainAddress(firstAddress);
+      setChain(firstChain);
+      setCurrency(firstCurrency);
+    }
+  }, [cryptoAccounts]);
   return (
     <>
       {!navBtn ? (
@@ -125,11 +146,18 @@ export function AddFunds({
                   <Select
                     name="chain-address"
                     value={blockChainAddress}
-                    onChange={(e) => setBlockChainAddress(e.target.value)}
                     isDisabled={!cryptoAccounts || cryptoAccounts.length < 1}
                   >
                     {cryptoAccounts?.map((option, index) => (
-                      <option key={index.toString()} value={option.address}>
+                      <option
+                        key={index.toString()}
+                        value={option?.address}
+                        onClick={() => {
+                          setBlockChainAddress(option?.address);
+                          setChain(option?.chain);
+                          setCurrency(option?.currency);
+                        }}
+                      >
                         {option.address}
                       </option>
                     ))}
@@ -139,16 +167,51 @@ export function AddFunds({
                   <Flex justifyContent="center" pt="1rem">
                     <QRCode
                       value={blockChainAddress}
-                      size={200}
                       bgColor="transparent"
-                      fgColor="teal"
+                      fgColor="cyan"
                     />
                   </Flex>
                 )}
               </Stack>
+              <Table size="sm" mt={10}>
+                <Tbody>
+                  <Tr>
+                    <Th>Currency</Th>
+                    <Td isNumeric>
+                      <Badge>{currency}</Badge>
+                    </Td>
+                  </Tr>
+                  <Tr>
+                    <Th>Chain</Th>
+                    <Td isNumeric>
+                      <Badge>{chain}</Badge>
+                    </Td>
+                  </Tr>
+                </Tbody>
+              </Table>
             </Box>
           </ModalBody>
-          <ModalFooter> </ModalFooter>
+          <ModalFooter>
+            {/* button to copy address and show a success toast */}
+            <Flex justify="center" w="full">
+              <Button
+                variantColor="green"
+                onClick={() => {
+                  navigator.clipboard.writeText(blockChainAddress);
+                  toast({
+                    title: "Address copied",
+                    description: "Address copied to clipboard",
+                    status: "success",
+                    duration: 5000,
+                    isClosable: true,
+                  });
+                  onClose();
+                }}
+              >
+                Copy Address
+              </Button>
+            </Flex>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </>

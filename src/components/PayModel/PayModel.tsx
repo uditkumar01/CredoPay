@@ -82,7 +82,7 @@ export function PayModel({
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader color="black.50">Pay No</ModalHeader>
+          <ModalHeader color="black.50">Pay Now</ModalHeader>
           <ModalCloseButton color="black.50" />
           <ModalBody>
             <Flex

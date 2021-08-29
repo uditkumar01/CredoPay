@@ -47,7 +47,15 @@ export function AuthProvider({
 }: {
   children: ReactNode;
 }): JSX.Element {
-  const initialState: AuthInitialStateType = { isLoggedIn: false };
+  const initialState: AuthInitialStateType = {
+    isLoggedIn: false,
+    balance: 0,
+    assets: {
+      BTC: 0,
+      ETH: 0,
+      USDC: 0,
+    },
+  };
   const [authState, authDispatch] = useReducer(authReducer, initialState);
   const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   useEffect(() => {

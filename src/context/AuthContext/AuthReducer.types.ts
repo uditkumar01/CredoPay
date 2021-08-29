@@ -10,4 +10,24 @@ export type AuthActionLogoutType = {
   payload: AuthUserType;
 };
 
-export type AuthActionType = AuthActionLoginType | AuthActionLogoutType;
+export type AuthActionBalanceType = {
+  type: "BALANCE";
+  payload: number;
+};
+
+export type AuthActionAssetsType = {
+  type: "ASSETS";
+  payload: TotalBalances;
+};
+
+export interface TotalBalances {
+  USDC: number;
+  BTC: number;
+  ETH: number;
+}
+
+export type AuthActionType =
+  | AuthActionLoginType
+  | AuthActionLogoutType
+  | AuthActionBalanceType
+  | AuthActionAssetsType;

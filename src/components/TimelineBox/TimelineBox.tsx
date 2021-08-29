@@ -12,6 +12,7 @@ import {
   Link,
 } from "@chakra-ui/react";
 import { GoArrowRight } from "react-icons/all";
+import useAuth from "../../context/AuthContext/AuthContext";
 import { Transaction } from "../../context/HistoryData/HistoryData";
 
 // function to get ether scan links for different crypto currencies
@@ -38,9 +39,18 @@ export const TimelineBox = ({
   status,
 }: Transaction): JSX.Element => {
   const toast = useToast();
+  const { authState } = useAuth();
   const checkifNull = (
     value: string | number | null | undefined
   ): string | number => (!value ? "Ext Wallet" : value);
+
+  const checkIfIdIsSame = (id: string | undefined): string => {
+    if (!id) return "Ext Wallet";
+    return authState.user?.walletId === id ? "You" : id;
+  };
+
+  const isSpentFromWallet =
+    source.type === "wallet" && authState.user?.walletId === source.id;
 
   return (
     <Box
@@ -63,7 +73,7 @@ export const TimelineBox = ({
             <Badge fontSize={{ base: "0.85em", md: "1em" }} colorScheme="cyan">
               <Text maxW="110px" isTruncated>
                 {source.type === "wallet"
-                  ? checkifNull(source.id)
+                  ? checkIfIdIsSame(source.id)
                   : checkifNull(source.address)}
               </Text>
             </Badge>
@@ -75,7 +85,7 @@ export const TimelineBox = ({
             <Badge fontSize={{ base: "0.85em", md: "1em" }} colorScheme="blue">
               <Text maxW="110px" isTruncated>
                 {destination.type === "wallet"
-                  ? checkifNull(destination.id)
+                  ? checkIfIdIsSame(destination.id)
                   : checkifNull(destination.address)}
               </Text>
             </Badge>
@@ -86,9 +96,11 @@ export const TimelineBox = ({
               bg="transparent"
               mt={{ base: "0.9rem", md: "0" }}
               fontSize={{ base: "1.3em", md: "0.9em" }}
-              colorScheme="green"
               mr="2px"
             >
+              {source.type !== "blockchain" && status === "complete" && (
+                <>{isSpentFromWallet ? "- " : "+ "}</>
+              )}
               {parseFloat(amount.amount).toFixed(2)}
             </Text>
             <Text

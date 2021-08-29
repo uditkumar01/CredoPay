@@ -23,8 +23,10 @@ import {
 import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { RiQuestionnaireFill } from "react-icons/all";
 import { v4 } from "uuid";
+import useAuth from "../../context/AuthContext/AuthContext";
 import { auth, firestore } from "../../Firebase";
 import { createUserEntity } from "../../Firebase/User";
+import { createETHAddress } from "../../lib/createETHAddress";
 import { createWallet } from "../../lib/createWallet";
 import { formatName } from "../../utils/formatName";
 import { BtnStyles } from "../PayModel/PayModel";
@@ -32,6 +34,12 @@ import { BtnStyles } from "../PayModel/PayModel";
 export interface CreateWalletPayload {
   idempotencyKey: string;
   description: string;
+}
+
+export interface CreateETHWalletPayload {
+  idempotencyKey: string;
+  currency: string;
+  chain: string;
 }
 
 export function CreateWalletModal({
@@ -48,13 +56,14 @@ export function CreateWalletModal({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [credTag, setCredTag] = useState("");
   const [loading, setLoading] = useState(false);
+  const { authState } = useAuth();
 
   const colors = ["gray", "red", "orange", "yellow", "green", "teal", "blue"];
 
   // function to update user's doc on firestore
   async function updateUserDoc(payload: any): Promise<void> {
     try {
-      const email = auth()?.currentUser?.email;
+      const email = authState.user?.email || auth()?.currentUser?.email;
       if (email) {
         console.log(email);
 
@@ -92,8 +101,22 @@ export function CreateWalletModal({
       };
 
       const resCreateWallet = await createWallet(createWalletPayload);
-      console.log(resCreateWallet);
-      updateUserDoc({ ...resCreateWallet, credTag });
+
+      const payload: CreateETHWalletPayload = {
+        idempotencyKey: v4(),
+        currency: "USD",
+        chain: "ETH",
+      };
+      const resETHAddress = await createETHAddress(
+        resCreateWallet?.walletId,
+        payload
+      );
+
+      updateUserDoc({
+        ...resCreateWallet,
+        credTag,
+        ethAddresses: [{ ...resETHAddress, ...payload }],
+      });
       onClose();
       // navigate user to dashboard
       // window.location.href = "/dashboard";
