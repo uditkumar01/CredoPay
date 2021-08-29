@@ -117,6 +117,7 @@ export function CreateWalletModal({
         credTag,
         ethAddresses: [{ ...resETHAddress, ...payload }],
       });
+
       onClose();
       // navigate user to dashboard
       // window.location.href = "/dashboard";
