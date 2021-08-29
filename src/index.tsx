@@ -4,7 +4,7 @@ import ReactDOM from "react-dom";
 import { BrowserRouter as Router } from "react-router-dom";
 import reportWebVitals from "./reportWebVitals";
 import * as serviceWorker from "./serviceWorker";
-import App from "./app/App";
+import App from "./App/App";
 import { theme } from "./theme";
 import { StaticDataContextProvider } from "./context/StaticData/StaticData";
 import { HistoryDataContextProvider } from "./context/HistoryData/HistoryData";
