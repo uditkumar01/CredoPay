@@ -6,6 +6,8 @@ import {
   BlockchainTransfer,
   WalletTrasfer,
 } from "../../lib/transferApi";
+import useAuth from "../AuthContext/AuthContext";
+import { useStaticData } from "../StaticData/StaticData";
 
 const io: any = socketIO;
 
@@ -33,14 +35,22 @@ const HistoryDataContext = createContext({} as HistoryDataInitialState);
 
 const socket = io.connect("https://credopaynotifications.uditkumar01.repl.co");
 
-// function for history data reducer
+// function for history data reducerdata
 function historyDataReducer(
   state: HistoryDataInitialState,
   action: HistoryDataReducerAction
 ): HistoryDataInitialState {
+  console.log("historyDataReducer", action);
+  const newHistoryItem = [...state.transactionsHistory];
   switch (action.type) {
     case "SET_HISTORY_DATA":
       return { ...state, ...action.payload };
+    case "ADD_HISTORY_ITEM":
+      newHistoryItem.unshift(action.payload.transactionsHistory[0]);
+      return {
+        ...state,
+        transactionsHistory: newHistoryItem,
+      };
     default:
       return state;
   }
@@ -58,20 +68,55 @@ export function HistoryDataContextProvider({
       transactionsHistory: [],
     } as HistoryDataInitialState
   );
+  const { authState, showLoadingScreen } = useAuth();
+  const { cryptoAccounts } = useStaticData();
+
+  const updateTransactionsHistory = async (): Promise<void> => {
+    const newHistoryData = await getTransactions(
+      cryptoAccounts,
+      authState?.user?.walletId || ""
+    );
+
+    // const filteredHistoryData = newHistoryData.filter(
+    //   (transaction: Transaction) => {
+    //     if (transaction.source.type === "wallet") {
+    //       return transaction.source.id === authState.user?.walletId;
+    //     }
+    //     if (transaction.destination.type === "wallet") {
+    //       return transaction.destination.id === authState.user?.walletId;
+    //     }
+    //     if (transaction.source.type === "blockchain") {
+    //       const hashAdd = transaction.source.address;
+    //       return cryptoAccounts.some((item) => item.address === hashAdd);
+    //     }
+    //     if (transaction.destination.type === "blockchain") {
+    //       const hashAdd = transaction.destination.address;
+    //       return cryptoAccounts.some((item) => item.address === hashAdd);
+    //     }
+    //     return false;
+    //   }
+    // );
+
+    console.log({ newHistoryData });
+
+    historyDataDispatch({
+      type: "SET_HISTORY_DATA",
+      payload: { transactionsHistory: newHistoryData },
+    });
+  };
 
   useEffect(() => {
     // socket listener on to get updated transactions status
-    (async () => {
-      socket.on("notification", async (data: any) => {
-        // console.log(data);
-        const newHistoryData = await getTransactions();
+    (() => {
+      socket.on("notification", async (rawData: any) => {
+        const data = JSON.parse(rawData);
+        console.log(data);
         historyDataDispatch({
-          type: "SET_HISTORY_DATA",
-          payload: { transactionsHistory: newHistoryData },
+          type: "ADD_HISTORY_ITEM",
+          payload: { transactionsHistory: [data.transfer] },
         });
       });
     })();
-
     // socket off on unmount
     return () => {
       socket.off("notification");
@@ -80,14 +125,10 @@ export function HistoryDataContextProvider({
 
   useEffect(() => {
     // get initial transactions data
-    (async () => {
-      const newHistoryData = await getTransactions();
-      historyDataDispatch({
-        type: "SET_HISTORY_DATA",
-        payload: { transactionsHistory: newHistoryData },
-      });
-    })();
-  }, []);
+    if (!showLoadingScreen && authState.isLoggedIn) {
+      (() => updateTransactionsHistory())();
+    }
+  }, [authState.isLoggedIn, showLoadingScreen]);
 
   return (
     <HistoryDataContext.Provider value={historyDataState}>

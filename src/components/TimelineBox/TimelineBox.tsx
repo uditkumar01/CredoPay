@@ -41,9 +41,7 @@ export const TimelineBox = ({
   const checkifNull = (
     value: string | number | null | undefined
   ): string | number => (!value ? "Ext Wallet" : value);
-  if (!transactionHash) {
-    console.log("no transaction hash", transactionHash, status);
-  }
+
   return (
     <Box
       bg={useColorModeValue("gray.50", "gray.700")}

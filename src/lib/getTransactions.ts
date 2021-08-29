@@ -1,5 +1,7 @@
 import axios from "axios";
 import * as dotenv from "dotenv";
+import { Transaction } from "../context/HistoryData/HistoryData";
+import { CryptoAccount } from "../context/StaticData/StaticData";
 
 dotenv.config();
 
@@ -24,7 +26,34 @@ const axiosInstance = axios.create({
 });
 
 // function to get all transactions
-export async function getTransactions(): Promise<any> {
-  const response = await axiosInstance.get("/v1/transfers");
-  return response?.data?.data;
+export async function getTransactions(
+  cryptoAccounts = [] as CryptoAccount[],
+  walletId: string
+): Promise<any> {
+  try {
+    const response = await axiosInstance.get("/v1/transfers");
+    const filteredHistoryData = response?.data?.data?.filter(
+      (transaction: Transaction) => {
+        if (transaction.source.type === "wallet") {
+          return transaction.source.id === walletId;
+        }
+        if (transaction.destination.type === "wallet") {
+          return transaction.destination.id === walletId;
+        }
+        if (transaction.source.type === "blockchain") {
+          const hashAdd = transaction.source.address;
+          return cryptoAccounts.some((item) => item.address === hashAdd);
+        }
+        if (transaction.destination.type === "blockchain") {
+          const hashAdd = transaction.destination.address;
+          return cryptoAccounts.some((item) => item.address === hashAdd);
+        }
+        return false;
+      }
+    );
+    return filteredHistoryData;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
 }

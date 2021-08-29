@@ -23,3 +23,6 @@ export { TimelineList } from "./TimelineList/TimelineList";
 export { TimelineListItem } from "./TimelineListItem/TimelineListItem";
 export { TimelineBox } from "./TimelineBox/TimelineBox";
 export { CreateWalletModal } from "./CreateWalletModal/CreateWalletModal";
+export { AccountModal } from "./AccountModal/AccountModal";
+export { LoadingScreen } from "./LoadingScreen/LoadingScreen";
+export { SearchModal } from "./SearchModal/SearchModal";

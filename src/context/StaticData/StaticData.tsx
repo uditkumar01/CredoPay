@@ -6,8 +6,11 @@ import {
   useReducer,
   useEffect,
 } from "react";
+import { firestore } from "../../Firebase";
 import { getBlockchainAddresses } from "../../lib/getCryptoAddresses";
-import { getWallets } from "../../lib/getWallets";
+import useAuth from "../AuthContext/AuthContext";
+import { AuthUserType } from "../AuthContext/AuthContext.types";
+// import { getWallets } from "../../lib/getWallets";
 
 interface CoinData {
   label: "bitcoin" | "ethereum" | "solana" | "usdc";
@@ -48,6 +51,7 @@ interface InitialValues {
   cryptoData: Array<CoinData>;
   userWallets: Array<Wallet>;
   cryptoAccounts: Array<CryptoAccount>;
+  allUsers: Array<AuthUserType>;
 }
 
 const StaticDataContext = createContext({} as InitialValues);
@@ -57,6 +61,7 @@ const StaticDataContext = createContext({} as InitialValues);
 // https://api.coingecko.com/api/v3/coins/solana
 
 // function to call apis to get crypto data using Promise all
+
 async function getCryptoData(): Promise<any> {
   // get crypto data from api
   try {
@@ -92,11 +97,8 @@ async function getCryptoData(): Promise<any> {
       currency: "$",
     });
 
-    const resUserWallets = await getWallets();
-
     return {
       cryptoData: resData,
-      userWallets: resUserWallets.data,
     };
   } catch (e) {
     console.log("while getting crypto data", e);
@@ -127,23 +129,48 @@ export function StaticDataContextProvider({
     staticDataReducer,
     {} as InitialValues
   );
+  const { authState, showLoadingScreen } = useAuth();
+
+  function getUserWallets(): any {
+    return [
+      {
+        walletId: authState.user?.walletId,
+        entityId: authState.user?.entityId,
+        type: authState.user?.type,
+        description: authState.user?.description,
+        balances: authState.user?.balances,
+      },
+    ];
+  }
 
   useEffect(() => {
-    (async () => {
-      try {
-        const resCryptoData = await getCryptoData();
-        const resBlockchainAddresses = await getBlockchainAddresses(
-          resCryptoData.userWallets
-        );
-        staticDataDispatch({
-          type: "SET_STATIC_DATA",
-          payload: { ...resCryptoData, cryptoAccounts: resBlockchainAddresses },
-        });
-      } catch (e) {
-        console.log("while static data fetching", e);
-      }
-    })();
-  }, []);
+    if (!showLoadingScreen && authState.isLoggedIn) {
+      console.log("getting static data");
+      (async () => {
+        try {
+          const resCryptoData = await getCryptoData();
+          const resUserWallets = await getUserWallets();
+          const resBlockchainAddresses = await getBlockchainAddresses(
+            resUserWallets
+          );
+          // getting all users from firestore
+          const allUsers = await firestore().collection("users").get();
+          const allUsersData = allUsers.docs.map((doc) => doc.data());
+          staticDataDispatch({
+            type: "SET_STATIC_DATA",
+            payload: {
+              ...resCryptoData,
+              userWallets: resUserWallets,
+              cryptoAccounts: resBlockchainAddresses,
+              allUsers: allUsersData,
+            },
+          });
+        } catch (e) {
+          console.log("while static data fetching", e);
+        }
+      })();
+    }
+  }, [authState.isLoggedIn, showLoadingScreen]);
 
   console.log("staticDataState", staticDataState);
 

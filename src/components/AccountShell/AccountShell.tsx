@@ -1,6 +1,7 @@
 import {
   Avatar,
   Box,
+  Button,
   DarkMode,
   Flex,
   Stack,
@@ -9,16 +10,10 @@ import {
 import * as React from "react";
 import {
   BiHome,
-  BiCommentAdd,
-  BiCreditCard,
-  BiUserCircle,
-  BiWallet,
-  BiRedo,
+  BiTransferAlt,
   BiNews,
-  BiEnvelope,
-  BiPurchaseTagAlt,
-  BiRecycle,
-} from "react-icons/bi";
+  HiOutlineLogout,
+} from "react-icons/all";
 import {
   Logo,
   ScrollArea,
@@ -28,13 +23,18 @@ import {
   NavItem,
   UserInfo,
 } from "..";
+import useAuth from "../../context/AuthContext/AuthContext";
 import { useMobileMenuState } from "../../custom-hooks/useMobileMenuState";
+import { AccountModal } from "../AccountModal/AccountModal";
+import { AddFunds } from "../AddFunds/AddFunds";
 import { CryptoStats } from "../CryptoStats/CryptoStats";
+import { MakeTransfer } from "../MakeTransfer/MakeTransfer";
+import { PayModel } from "../PayModel/PayModel";
 import { Timeline } from "../Timeline/Timeline";
 
 export const AccountShell = (): JSX.Element => {
   const { isOpen, toggle } = useMobileMenuState();
-  console.log(isOpen, toggle);
+  const { authState, signOut } = useAuth();
   return (
     <DarkMode>
       <Flex
@@ -70,21 +70,29 @@ export const AccountShell = (): JSX.Element => {
             <ScrollArea pt="5" pb="6">
               <Stack spacing="8" flex="1" overflow="auto" pt="8">
                 <Stack spacing="1">
-                  <NavItem active icon={<BiHome />} label="Get Started" />
-                  <NavItem icon={<BiCommentAdd />} label="Inbox" />
+                  <NavItem active icon={<BiHome />} label="Dashboard" />
                 </Stack>
                 <NavGroup label="Your Business">
-                  <NavItem icon={<BiCreditCard />} label="Transactions" />
-                  <NavItem icon={<BiUserCircle />} label="Customers" />
-                  <NavItem icon={<BiWallet />} label="Income" />
-                  <NavItem icon={<BiRedo />} label="Transfer" />
+                  <NavItem icon={<BiTransferAlt />} label="Transactions" />
+                  <PayModel navBtn />
+                  <AddFunds navBtn />
+                  <MakeTransfer navBtn />
                 </NavGroup>
 
-                <NavGroup label="Seller Tools">
-                  <NavItem icon={<BiNews />} label="Payment Pages" />
-                  <NavItem icon={<BiEnvelope />} label="Invoices" />
-                  <NavItem icon={<BiPurchaseTagAlt />} label="Plans" />
-                  <NavItem icon={<BiRecycle />} label="Subsription" />
+                <NavGroup label="Your Account">
+                  <AccountModal navBtn />
+                  <Button
+                    variant="unstyled"
+                    textAlign="left"
+                    fontSize="0.85rem"
+                    fontWeight="light"
+                    _focus={{
+                      outline: "none",
+                    }}
+                    onClick={signOut}
+                  >
+                    <NavItem icon={<HiOutlineLogout />} label="Logout" />
+                  </Button>
                 </NavGroup>
               </Stack>
             </ScrollArea>
@@ -113,7 +121,7 @@ export const AccountShell = (): JSX.Element => {
                 <Avatar
                   name="Dan Abrahmov"
                   size="sm"
-                  src="https://bit.ly/dan-abramov"
+                  src={authState?.user?.photoURL || ""}
                 />
               </Flex>
               <Flex

@@ -22,14 +22,19 @@ import {
   FormControl,
   Select,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import { ReactElement, useState } from "react";
+import { MdTransferWithinAStation } from "react-icons/md";
 import { v4 } from "uuid";
+import useAuth from "../../context/AuthContext/AuthContext";
 import {
   BlockchainTransfer,
   transfer,
   TransferPayload,
   WalletTrasfer,
 } from "../../lib/transferApi";
+import { NavItem } from "../NavItem/NavItem";
+import { BtnStyles } from "../PayModel/PayModel";
+import { SearchModal } from "../SearchModal/SearchModal";
 
 function Field({
   name,
@@ -69,7 +74,14 @@ function Field({
   );
 }
 
-export function MakeTransfer(): JSX.Element {
+export function MakeTransfer({
+  btnStyles,
+  navBtn,
+}: {
+  btnStyles?: BtnStyles;
+  icon?: ReactElement;
+  navBtn?: boolean;
+}): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [senderAddress, setSenderAddress] = useState("");
   const [receiverAddress, setReceiverAddress] = useState("");
@@ -77,6 +89,7 @@ export function MakeTransfer(): JSX.Element {
   const [chainType, setChainType] = useState("ETH");
   const [currency, setCurrency] = useState("USD");
   const [isWallet, setIsWallet] = useState(true);
+  const { authState } = useAuth();
 
   async function handleSubmit(): Promise<null> {
     let destination: BlockchainTransfer | WalletTrasfer = {
@@ -99,7 +112,7 @@ export function MakeTransfer(): JSX.Element {
     }
     // "1000128582"
     const payload: TransferPayload = {
-      source: { type: "wallet", id: senderAddress },
+      source: { type: "wallet", id: authState.user?.walletId || "" },
       destination,
       amount: { amount, currency },
       idempotencyKey: v4(),
@@ -109,27 +122,31 @@ export function MakeTransfer(): JSX.Element {
     const res = await transfer(payload);
 
     console.log(res);
+
+    onClose();
     return null;
   }
 
   return (
     <>
-      <Button
-        p="0.7rem 1.6rem"
-        cursor="pointer"
-        transition="0.2s all ease"
-        m="0"
-        w="100%"
-        justifyContent="flex-start"
-        borderRadius="0"
-        bg="gray.700"
-        color="whiteAlpha.800"
-        onClick={onOpen}
-        _hover={{ bg: "black.500" }}
-        _active={{ bg: "black.500" }}
-      >
-        Make Transfer
-      </Button>
+      {!navBtn ? (
+        <Button onClick={onOpen} {...btnStyles}>
+          Transfer Creds
+        </Button>
+      ) : (
+        <Button
+          variant="unstyled"
+          textAlign="left"
+          fontSize="0.85rem"
+          fontWeight="light"
+          _focus={{
+            outline: "none",
+          }}
+          onClick={onOpen}
+        >
+          <NavItem icon={<MdTransferWithinAStation />} label="Transfer Creds" />
+        </Button>
+      )}
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
@@ -147,14 +164,6 @@ export function MakeTransfer(): JSX.Element {
                 p="1rem 1rem 2rem 1rem"
               >
                 <Stack spacing={4}>
-                  <Field
-                    name="sender-walletID"
-                    placeHolder="12343"
-                    label="Sender wallet ID"
-                    leftAddOn=""
-                    value={senderAddress}
-                    setValue={setSenderAddress}
-                  />
                   <FormControl>
                     <FormLabel htmlFor="chain">Currency</FormLabel>
                     <Select
@@ -195,13 +204,9 @@ export function MakeTransfer(): JSX.Element {
                   <TabPanels>
                     <TabPanel>
                       <Stack spacing={4}>
-                        <Field
-                          name="reciever-walletID"
-                          label="Reciever Wallet ID"
-                          placeHolder="12345"
-                          leftAddOn=""
-                          value={receiverAddress}
+                        <SearchModal
                           setValue={setReceiverAddress}
+                          addressValue={receiverAddress}
                         />
                       </Stack>
                     </TabPanel>
@@ -239,7 +244,12 @@ export function MakeTransfer(): JSX.Element {
             </Stack>
           </ModalBody>
           <ModalFooter>
-            <Button onClick={handleSubmit}>Transfer</Button>
+            <Button
+              onClick={handleSubmit}
+              isDisabled={!receiverAddress || !amount}
+            >
+              Transfer
+            </Button>
           </ModalFooter>
         </ModalContent>
       </Modal>

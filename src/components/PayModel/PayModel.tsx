@@ -17,6 +17,8 @@ import {
 } from "@chakra-ui/react";
 import QrReader from "react-qr-reader";
 import { ReactElement, useRef, useState } from "react";
+import { BiCreditCard } from "react-icons/bi";
+import { NavItem } from "../NavItem/NavItem";
 
 export interface BtnStyles {
   [key: string]:
@@ -28,7 +30,14 @@ export interface BtnStyles {
       };
 }
 
-export function PayModel({ btnStyles }: { btnStyles: BtnStyles }): JSX.Element {
+export function PayModel({
+  btnStyles,
+  navBtn,
+}: {
+  btnStyles?: BtnStyles;
+  icon?: ReactElement;
+  navBtn?: boolean;
+}): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef(null);
 
@@ -46,9 +55,24 @@ export function PayModel({ btnStyles }: { btnStyles: BtnStyles }): JSX.Element {
 
   return (
     <DarkMode>
-      <Button ref={btnRef} onClick={onOpen} {...btnStyles}>
-        Pay Now
-      </Button>
+      {!navBtn ? (
+        <Button ref={btnRef} onClick={onOpen} {...btnStyles}>
+          Pay Now
+        </Button>
+      ) : (
+        <Button
+          variant="unstyled"
+          textAlign="left"
+          fontSize="0.85rem"
+          fontWeight="light"
+          _focus={{
+            outline: "none",
+          }}
+          onClick={onOpen}
+        >
+          <NavItem icon={<BiCreditCard />} label="Pay Now" />
+        </Button>
+      )}
 
       <Modal
         onClose={onClose}
@@ -58,7 +82,7 @@ export function PayModel({ btnStyles }: { btnStyles: BtnStyles }): JSX.Element {
       >
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader color="black.50">Pay Now</ModalHeader>
+          <ModalHeader color="black.50">Pay No</ModalHeader>
           <ModalCloseButton color="black.50" />
           <ModalBody>
             <Flex

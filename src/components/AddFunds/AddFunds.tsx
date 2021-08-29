@@ -19,8 +19,10 @@ import {
   Flex,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import { BiMessageAltAdd } from "react-icons/bi";
 import QRCode from "react-qr-code";
 import { useStaticData } from "../../context/StaticData/StaticData";
+import { NavItem } from "../NavItem/NavItem";
 
 function Field({
   name,
@@ -62,7 +64,9 @@ function Field({
 
 export function AddFunds({
   btnStyles,
+  navBtn,
 }: {
+  navBtn?: boolean;
   btnStyles?: {
     [key: string]:
       | string
@@ -78,9 +82,24 @@ export function AddFunds({
 
   return (
     <>
-      <Button onClick={onOpen} {...btnStyles}>
-        Add Funds
-      </Button>
+      {!navBtn ? (
+        <Button onClick={onOpen} {...btnStyles}>
+          Add Funds
+        </Button>
+      ) : (
+        <Button
+          variant="unstyled"
+          textAlign="left"
+          fontSize="0.85rem"
+          fontWeight="light"
+          _focus={{
+            outline: "none",
+          }}
+          onClick={onOpen}
+        >
+          <NavItem icon={<BiMessageAltAdd />} label="Add Funds" />
+        </Button>
+      )}
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
@@ -98,7 +117,11 @@ export function AddFunds({
             >
               <Stack spacing="1rem">
                 <FormControl>
-                  <FormLabel htmlFor="chain-address">Currency</FormLabel>
+                  <FormLabel htmlFor="chain-address">
+                    {!cryptoAccounts || cryptoAccounts.length < 1
+                      ? "You currently have no blockchain address"
+                      : "Choose an address"}
+                  </FormLabel>
                   <Select
                     name="chain-address"
                     value={blockChainAddress}

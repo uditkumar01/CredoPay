@@ -12,6 +12,7 @@ import {
   IconProps,
   useColorModeValue,
   Center,
+  DarkMode,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { FaEthereum, FcGoogle } from "react-icons/all";
@@ -19,6 +20,8 @@ import { CreateWalletModal } from "../../components";
 import { Layout } from "../../components/Layout/Layout";
 import useAuth from "../../context/AuthContext/AuthContext";
 import { auth, firestore } from "../../Firebase";
+import { createUserEntity } from "../../Firebase/User";
+import { getWalletInfo } from "../../lib/getWalletInfo";
 
 /* eslint-disable max-len */
 
@@ -48,27 +51,120 @@ export default function Home(): JSX.Element {
     signIn,
     authState: { isLoggedIn },
   } = useAuth();
-  const [btnLoading, setBtnLoading] = useState(false);
+  const [btnLoading, setBtnLoading] = useState(true);
+  const [btnStatus, setBtnStatus] = useState("signin");
   // get user from firestore using email
-  // useEffect(() => {
-  //   const email = auth()?.currentUser?.email;
-  //   if (email) {
-  //     console.log(email);
-  //     (async () => {
-  //       const userRef = firestore().collection("users");
-  //       // getting user if his email is found in firestore
-  //       const snapshot = await userRef.where("email", "==", email).get();
-  //       const user = snapshot.docs[0].data();
+  useEffect(() => {
+    const email = auth()?.currentUser?.email;
+    let progressBtn = "signin";
+    if (email) {
+      console.log(email);
 
-  //       // updating user doc in firestore
-  //       // userRef.doc(user.uid).update({
-  //       //   wallet: undefined,
-  //       // });
+      (async () => {
+        let userRef = firestore().collection("users");
+        // getting user if his email is found in firestore
+        let snapshot = await userRef.where("email", "==", email).get();
+        if (snapshot.empty) {
+          await createUserEntity(auth().currentUser);
+          userRef = firestore().collection("users");
+          // getting user if his email is found in firestore
+          snapshot = await userRef.where("email", "==", email).get();
+        }
 
-  //       console.log(user, "hi");
-  //     })();
-  //   }
-  // });
+        const user = snapshot.docs[0].data();
+        console.log(user);
+        try {
+          const res = await getWalletInfo(user?.walletId || "");
+          console.log({ res });
+          if (res) {
+            progressBtn = "dashboard";
+          } else {
+            progressBtn = "wallet";
+          }
+        } catch (e) {
+          console.log("error while checking wallet id", e);
+        }
+        console.log({ progressBtn });
+        setBtnStatus(progressBtn);
+      })();
+    }
+    console.log(progressBtn, "progress");
+    setBtnLoading(false);
+  });
+  console.log(btnStatus, "btn status");
+
+  const getDashBoardBtn = (): JSX.Element => {
+    switch (btnStatus) {
+      case "dashboard":
+        return (
+          <Button
+            as="a"
+            w="full"
+            maxW="350px"
+            variant="outline"
+            leftIcon={<Image src="/svgs/logo.svg" h="26px" />}
+            size="lg"
+            colorScheme="blue"
+            rounded="full"
+            isLoading={btnLoading}
+            href="/dashboard"
+            textDecoration="none"
+          >
+            <Center>
+              <Text>Go to DashBoard</Text>
+            </Center>
+          </Button>
+        );
+      case "wallet":
+        return (
+          <CreateWalletModal
+            btnStyles={{
+              w: "full",
+              maxW: "350px",
+              variant: "outline",
+              size: "lg",
+              colorScheme: "blue",
+              rounded: "full",
+              leftIcon: <Image src="/svgs/logo.svg" h="26px" />,
+            }}
+            isLoading={btnLoading}
+          >
+            <Center>
+              <Text>Create your Wallet</Text>
+            </Center>
+          </CreateWalletModal>
+        );
+      default:
+        return (
+          <Button
+            w="full"
+            maxW="350px"
+            variant="outline"
+            leftIcon={<FcGoogle />}
+            size="lg"
+            colorScheme="blue"
+            rounded="full"
+            isLoading={btnLoading}
+            onClick={() => {
+              (async () => {
+                setBtnLoading(true);
+                try {
+                  await signIn();
+                } catch (e) {
+                  console.log(e);
+                }
+                setBtnLoading(false);
+              })();
+            }}
+          >
+            <Center>
+              <Text>Sign in with Google</Text>
+            </Center>
+          </Button>
+        );
+    }
+  };
+
   return (
     <Layout>
       <Container maxW="7xl">
@@ -116,47 +212,7 @@ export default function Home(): JSX.Element {
               spacing={{ base: 4, sm: 6 }}
               direction={{ base: "column", sm: "row" }}
             >
-              {!isLoggedIn ? (
-                <Button
-                  w="full"
-                  maxW="350px"
-                  variant="outline"
-                  leftIcon={<FcGoogle />}
-                  size="lg"
-                  colorScheme="blue"
-                  rounded="full"
-                  isLoading={btnLoading}
-                  onClick={() => {
-                    setBtnLoading(true);
-                    try {
-                      signIn();
-                    } catch (e) {
-                      console.log(e);
-                    }
-                    setBtnLoading(false);
-                  }}
-                >
-                  <Center>
-                    <Text>Sign in with Google</Text>
-                  </Center>
-                </Button>
-              ) : (
-                <CreateWalletModal
-                  btnStyles={{
-                    w: "full",
-                    maxW: "350px",
-                    variant: "outline",
-                    size: "lg",
-                    colorScheme: "blue",
-                    rounded: "full",
-                    leftIcon: <Image src="/svgs/logo.svg" h="26px" />,
-                  }}
-                >
-                  <Center>
-                    <Text>Create your Wallet</Text>
-                  </Center>
-                </CreateWalletModal>
-              )}
+              <DarkMode>{getDashBoardBtn()}</DarkMode>
             </Stack>
           </Stack>
           <Flex

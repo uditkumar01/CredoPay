@@ -4,19 +4,21 @@ import {
   useContext,
   useEffect,
   useReducer,
+  useState,
 } from "react";
-import { auth, firebase } from "../../Firebase";
+import { auth, firebase, firestore } from "../../Firebase";
 import { createUserEntity } from "../../Firebase/User";
 import { authReducer } from "./AuthReducer";
 import {
   AuthContextValue,
   AuthInitialStateType,
+  AuthUserType,
   SignInOutResType,
 } from "./AuthContext.types";
 
 const AuthContext = createContext<AuthContextValue>({} as AuthContextValue);
 
-const signIn = (): SignInOutResType => {
+const signIn = async (): Promise<SignInOutResType> => {
   const provider = new firebase.auth.GoogleAuthProvider();
 
   auth()
@@ -28,7 +30,7 @@ const signIn = (): SignInOutResType => {
   return { success: true };
 };
 
-const signOut = (): SignInOutResType => {
+const signOut = async (): Promise<SignInOutResType> => {
   if (auth().currentUser) {
     auth()
       .signOut()
@@ -47,12 +49,23 @@ export function AuthProvider({
 }): JSX.Element {
   const initialState: AuthInitialStateType = { isLoggedIn: false };
   const [authState, authDispatch] = useReducer(authReducer, initialState);
+  const [showLoadingScreen, setShowLoadingScreen] = useState(true);
   useEffect(() => {
-    const observer = auth().onAuthStateChanged(function (user) {
+    const observer = auth().onAuthStateChanged(async function (user) {
+      // setShowLoadingScreen(true);
       if (user) {
         authDispatch({
           type: "LOGIN",
           payload: true,
+        });
+        const userDoc = await firestore()
+          .collection("users")
+          .doc(user.uid)
+          .get();
+        const dbUser = userDoc.data();
+        authDispatch({
+          type: "SET_USER",
+          payload: (dbUser as AuthUserType) || ({} as AuthUserType),
         });
         createUserEntity(user);
       } else {
@@ -61,6 +74,7 @@ export function AuthProvider({
           payload: false,
         });
       }
+      setShowLoadingScreen(false);
     });
     return () => {
       observer();
@@ -73,6 +87,7 @@ export function AuthProvider({
         authDispatch,
         signIn,
         signOut,
+        showLoadingScreen,
       }}
     >
       {children}

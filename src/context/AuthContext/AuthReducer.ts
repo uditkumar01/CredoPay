@@ -10,7 +10,12 @@ export function authReducer(
       return {
         ...state,
         isLoggedIn: action.payload,
-      } as AuthInitialStateType;
+      };
+    case "SET_USER":
+      return {
+        ...state,
+        user: action.payload,
+      };
     default:
       return state;
   }

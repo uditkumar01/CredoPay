@@ -1,13 +1,18 @@
+import { useEffect } from "react";
 import { Layout } from "../../components/Layout/Layout";
 import { AccountShell } from "../../components";
-import { TotalBalances } from "../../components/CryptoStatCard/CryptoStatCard";
-import {
-  useStaticData,
-  Wallet,
-  WalletBalance,
-} from "../../context/StaticData/StaticData";
+import useAuth from "../../context/AuthContext/AuthContext";
 
 export default function DashBoard(): JSX.Element {
+  const {
+    authState: { isLoggedIn },
+    showLoadingScreen,
+  } = useAuth();
+  useEffect(() => {
+    if (!showLoadingScreen && !isLoggedIn) {
+      window.location.href = "/";
+    }
+  }, [isLoggedIn]);
   return (
     <Layout noNavbar>
       <AccountShell />

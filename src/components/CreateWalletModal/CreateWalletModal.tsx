@@ -22,31 +22,104 @@ import {
 } from "@chakra-ui/react";
 import { ReactNode, useState } from "react";
 import { RiQuestionnaireFill } from "react-icons/all";
-import { auth } from "../../Firebase";
+import { v4 } from "uuid";
+import { auth, firestore } from "../../Firebase";
+import { createUserEntity } from "../../Firebase/User";
+import { createWallet } from "../../lib/createWallet";
 import { formatName } from "../../utils/formatName";
 import { BtnStyles } from "../PayModel/PayModel";
+
+export interface CreateWalletPayload {
+  idempotencyKey: string;
+  description: string;
+}
 
 export function CreateWalletModal({
   children,
   btnStyles,
+  isLoading,
 }: {
   children: ReactNode;
   btnStyles?: BtnStyles;
+  isLoading?: boolean;
 }): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [credTag, setCredTag] = useState("");
   const [loading, setLoading] = useState(false);
-  console.log(auth().currentUser);
+
+  const colors = ["gray", "red", "orange", "yellow", "green", "teal", "blue"];
+
+  // function to update user's doc on firestore
+  async function updateUserDoc(payload: any): Promise<void> {
+    try {
+      const email = auth()?.currentUser?.email;
+      if (email) {
+        console.log(email);
+
+        const userRef = firestore().collection("users");
+        // getting user if his email is found in firestore
+        const snapshot = await userRef.where("email", "==", email).get();
+
+        // if user is not present create a new user
+        if (snapshot.empty) {
+          await createUserEntity(auth().currentUser);
+          updateUserDoc(payload);
+        }
+
+        const user = snapshot.docs[0].data();
+
+        // updating user doc in firestore
+        userRef.doc(user.uid).update({
+          ...payload,
+        });
+      }
+    } catch (err) {
+      console.log("Error while updating user doc", err);
+    }
+  }
+
+  // onSubmitHandler function to create a new wallet
+  const onSubmitHandler = async (): Promise<void> => {
+    setLoading(true);
+    try {
+      const idempotencyKey = v4();
+      const createWalletPayload: CreateWalletPayload = {
+        idempotencyKey,
+        description: `${credTag}'s wallet`,
+      };
+
+      const resCreateWallet = await createWallet(createWalletPayload);
+      console.log(resCreateWallet);
+      updateUserDoc({ ...resCreateWallet, credTag });
+      onClose();
+      // navigate user to dashboard
+      window.location.href = "/dashboard";
+    } catch (err) {
+      console.log("Error while creating wallet", err);
+    }
+    setLoading(false);
+  };
+
   return (
     <>
-      <Button onClick={onOpen} {...btnStyles}>
+      <Button onClick={onOpen} {...btnStyles} isLoading={isLoading}>
         {children}
       </Button>
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent rounded="md" overflow="hidden">
-          {loading && <Progress size="xs" isIndeterminate />}
+          {!loading ? (
+            <Progress
+              colorScheme={colors[credTag.length % colors.length]}
+              value={(credTag.length / 6) * 100}
+              size="xs"
+              hasStripe
+              isAnimated
+            />
+          ) : (
+            <Progress colorScheme="blue" size="xs" isIndeterminate />
+          )}
           <ModalHeader> </ModalHeader>
           <ModalBody>
             <Box p={4}>
@@ -96,6 +169,7 @@ export function CreateWalletModal({
                     _hover={{
                       bg: "blue.500",
                     }}
+                    onClick={onSubmitHandler}
                     isDisabled={credTag.length < 6}
                   >
                     Create Wallet
