@@ -13,6 +13,12 @@ export interface AuthUserType {
   description: string;
   credTag: string;
   balances: Array<WalletBalance>;
+  ethAddresses: Array<{
+    address: string;
+    chain: number;
+    currency: string;
+    idempotencyKey: string;
+  }>;
 }
 export interface AuthInitialStateType {
   isLoggedIn: boolean;

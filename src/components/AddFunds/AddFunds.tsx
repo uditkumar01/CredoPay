@@ -29,46 +29,51 @@ import {
 import { useEffect, useState } from "react";
 import { BiMessageAltAdd } from "react-icons/bi";
 import QRCode from "qrcode.react";
+import { v4 } from "uuid";
 import { useStaticData } from "../../context/StaticData/StaticData";
 import { NavItem } from "../NavItem/NavItem";
+import { createETHAddress } from "../../lib/createETHAddress";
+import useAuth from "../../context/AuthContext/AuthContext";
+import { CreateETHWalletPayload } from "../CreateWalletModal/CreateWalletModal";
+import { firestore } from "../../Firebase";
 
-function Field({
-  name,
-  placeHolder,
-  label,
-  leftAddOn,
-  value,
-  setValue,
-}: {
-  name: string;
-  placeHolder: string;
-  label: string;
-  leftAddOn: string;
-  value: string;
-  setValue: (value: string) => void;
-}): JSX.Element {
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>): void {
-    setValue(e.target.value);
-  }
-  return (
-    <>
-      <FormControl>
-        <FormLabel mb="0.2rem" htmlFor={name}>
-          {label}
-        </FormLabel>
-        <InputGroup>
-          {leftAddOn && <InputLeftAddon>{leftAddOn}</InputLeftAddon>}
-          <Input
-            name={name}
-            value={value}
-            placeholder={placeHolder}
-            onChange={handleChange}
-          />
-        </InputGroup>
-      </FormControl>
-    </>
-  );
-}
+// function Field({
+//   name,
+//   placeHolder,
+//   label,
+//   leftAddOn,
+//   value,
+//   setValue,
+// }: {
+//   name: string;
+//   placeHolder: string;
+//   label: string;
+//   leftAddOn: string;
+//   value: string;
+//   setValue: (value: string) => void;
+// }): JSX.Element {
+//   function handleChange(e: React.ChangeEvent<HTMLInputElement>): void {
+//     setValue(e.target.value);
+//   }
+//   return (
+//     <>
+//       <FormControl>
+//         <FormLabel mb="0.2rem" htmlFor={name}>
+//           {label}
+//         </FormLabel>
+//         <InputGroup>
+//           {leftAddOn && <InputLeftAddon>{leftAddOn}</InputLeftAddon>}
+//           <Input
+//             name={name}
+//             value={value}
+//             placeholder={placeHolder}
+//             onChange={handleChange}
+//           />
+//         </InputGroup>
+//       </FormControl>
+//     </>
+//   );
+// }
 
 export function AddFunds({
   btnStyles,
@@ -89,18 +94,43 @@ export function AddFunds({
   const [chain, setChain] = useState("");
   const [currency, setCurrency] = useState("");
   const { cryptoAccounts } = useStaticData();
+  const { authState, showLoadingScreen } = useAuth();
   const toast = useToast();
 
   useEffect(() => {
-    if (cryptoAccounts) {
-      const firstAddress = cryptoAccounts[0].address;
-      const firstChain = cryptoAccounts[0].chain;
-      const firstCurrency = cryptoAccounts[0].currency;
-      setBlockChainAddress(firstAddress);
-      setChain(firstChain);
-      setCurrency(firstCurrency);
+    if (!showLoadingScreen && authState.isLoggedIn) {
+      // if (!cryptoAccounts || cryptoAccounts.length) {
+      //   // create a new block chain address
+      //   (async () => {
+      //     const payload: CreateETHWalletPayload = {
+      //       idempotencyKey: v4(),
+      //       currency: "USD",
+      //       chain: "ETH",
+      //     };
+      //     const newETHAddress = await createETHAddress(
+      //       authState?.user?.walletId,
+      //       payload
+      //     );
+      //     const userRef = firestore().collection("users");
+      //     userRef.doc(authState?.user?.uid).update({
+      //       ...payload,
+      //       ethAddresses: [
+      //         ...(authState?.user?.ethAddresses || []),
+      //         { ...payload, ...newETHAddress },
+      //       ],
+      //     });
+      //   })();
+      // }
+      if (cryptoAccounts) {
+        const firstAddress = cryptoAccounts[0].address;
+        const firstChain = cryptoAccounts[0].chain;
+        const firstCurrency = cryptoAccounts[0].currency;
+        setBlockChainAddress(firstAddress);
+        setChain(firstChain);
+        setCurrency(firstCurrency);
+      }
     }
-  }, [cryptoAccounts]);
+  }, [cryptoAccounts, showLoadingScreen, authState]);
   return (
     <>
       {!navBtn ? (
@@ -125,7 +155,7 @@ export function AddFunds({
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Transfer</ModalHeader>
+          <ModalHeader>Add Funds</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Box
