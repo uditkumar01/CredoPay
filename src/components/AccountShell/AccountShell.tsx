@@ -73,7 +73,6 @@ export const AccountShell = (): JSX.Element => {
                   <NavItem active icon={<BiHome />} label="Dashboard" />
                 </Stack>
                 <NavGroup label="Your Business">
-                  <NavItem icon={<BiTransferAlt />} label="Transactions" />
                   <PayModel navBtn />
                   <AddFunds navBtn />
                   <MakeTransfer navBtn />

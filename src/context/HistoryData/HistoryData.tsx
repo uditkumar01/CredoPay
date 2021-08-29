@@ -1,4 +1,11 @@
-import { createContext, useContext, useReducer, useEffect } from "react";
+import { useToast } from "@chakra-ui/react";
+import {
+  createContext,
+  useContext,
+  useReducer,
+  useEffect,
+  Dispatch,
+} from "react";
 import socketIO from "socket.io-client";
 import { getTransactions } from "../../lib/getTransactions";
 import {
@@ -6,6 +13,7 @@ import {
   BlockchainTransfer,
   WalletTrasfer,
 } from "../../lib/transferApi";
+import { removeUnderscores } from "../../utils/removeUnderscores";
 import useAuth from "../AuthContext/AuthContext";
 import { useStaticData } from "../StaticData/StaticData";
 
@@ -31,7 +39,12 @@ interface HistoryDataReducerAction {
   payload: HistoryDataInitialState;
 }
 
-const HistoryDataContext = createContext({} as HistoryDataInitialState);
+interface HistoryDataContextValue {
+  historyDataState: HistoryDataInitialState;
+  historyDataDispatch: Dispatch<HistoryDataReducerAction>;
+}
+
+const HistoryDataContext = createContext({} as HistoryDataContextValue);
 
 const socket = io.connect("https://credopaynotifications.uditkumar01.repl.co");
 
@@ -41,7 +54,7 @@ function historyDataReducer(
   action: HistoryDataReducerAction
 ): HistoryDataInitialState {
   console.log("historyDataReducer", action);
-  const newHistoryItem = [...state.transactionsHistory];
+  const newHistoryItem = [...state.transactionsHistory].splice(1);
   switch (action.type) {
     case "SET_HISTORY_DATA":
       return { ...state, ...action.payload };
@@ -70,32 +83,13 @@ export function HistoryDataContextProvider({
   );
   const { authState, showLoadingScreen } = useAuth();
   const { cryptoAccounts } = useStaticData();
+  const toast = useToast();
 
   const updateTransactionsHistory = async (): Promise<void> => {
     const newHistoryData = await getTransactions(
       cryptoAccounts,
       authState?.user?.walletId || ""
     );
-
-    // const filteredHistoryData = newHistoryData.filter(
-    //   (transaction: Transaction) => {
-    //     if (transaction.source.type === "wallet") {
-    //       return transaction.source.id === authState.user?.walletId;
-    //     }
-    //     if (transaction.destination.type === "wallet") {
-    //       return transaction.destination.id === authState.user?.walletId;
-    //     }
-    //     if (transaction.source.type === "blockchain") {
-    //       const hashAdd = transaction.source.address;
-    //       return cryptoAccounts.some((item) => item.address === hashAdd);
-    //     }
-    //     if (transaction.destination.type === "blockchain") {
-    //       const hashAdd = transaction.destination.address;
-    //       return cryptoAccounts.some((item) => item.address === hashAdd);
-    //     }
-    //     return false;
-    //   }
-    // );
 
     console.log({ newHistoryData });
 
@@ -111,9 +105,22 @@ export function HistoryDataContextProvider({
       socket.on("notification", async (rawData: any) => {
         const data = JSON.parse(rawData);
         console.log(data);
+        toast({
+          title: data?.transfer?.errorCode
+            ? "Transaction Failed"
+            : "Transaction Successfull",
+          description: data?.transfer?.errorCode
+            ? `Failed due to ${removeUnderscores(
+                data?.transfer?.errorCode || ""
+              )}`
+            : `Successfully completed transaction`,
+          status: data?.transfer?.errorCode ? "error" : "success",
+          duration: 5000,
+          isClosable: true,
+        });
         historyDataDispatch({
           type: "ADD_HISTORY_ITEM",
-          payload: { transactionsHistory: [data.transfer] },
+          payload: { transactionsHistory: [data?.transfer] },
         });
       });
     })();
@@ -131,14 +138,16 @@ export function HistoryDataContextProvider({
   }, [authState.isLoggedIn, showLoadingScreen]);
 
   return (
-    <HistoryDataContext.Provider value={historyDataState}>
+    <HistoryDataContext.Provider
+      value={{ historyDataState, historyDataDispatch }}
+    >
       {children}
     </HistoryDataContext.Provider>
   );
 }
 
 // making a custom hook for history data
-export function useHistoryData(): HistoryDataInitialState {
+export function useHistoryData(): HistoryDataContextValue {
   const context = useContext(HistoryDataContext);
   if (context === undefined) {
     throw new Error("useHistoryData must be used within a HistoryDataProvider");

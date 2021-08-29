@@ -5,7 +5,9 @@ import { useHistoryData } from "../../context/HistoryData/HistoryData";
 import { removeUnderscores } from "../../utils/removeUnderscores";
 
 export const Timeline = ({ maxW }: { maxW?: string }): JSX.Element => {
-  const { transactionsHistory } = useHistoryData();
+  const {
+    historyDataState: { transactionsHistory },
+  } = useHistoryData();
   return (
     <Box as="section" w="full" maxW="100vw">
       <Box

@@ -26,6 +26,7 @@ import { ReactElement, useState } from "react";
 import { MdTransferWithinAStation } from "react-icons/md";
 import { v4 } from "uuid";
 import useAuth from "../../context/AuthContext/AuthContext";
+import { useHistoryData } from "../../context/HistoryData/HistoryData";
 import {
   BlockchainTransfer,
   transfer,
@@ -90,6 +91,7 @@ export function MakeTransfer({
   const [currency, setCurrency] = useState("USD");
   const [isWallet, setIsWallet] = useState(true);
   const { authState } = useAuth();
+  const { historyDataDispatch } = useHistoryData();
 
   async function handleSubmit(): Promise<null> {
     let destination: BlockchainTransfer | WalletTrasfer = {
@@ -121,8 +123,16 @@ export function MakeTransfer({
     // console.log(payload);
     const res = await transfer(payload);
 
+    historyDataDispatch({
+      type: "ADD_HISTORY_ITEM",
+      payload: {
+        transactionsHistory: [res],
+      },
+    });
+
     console.log(res);
 
+    setReceiverAddress("");
     onClose();
     return null;
   }

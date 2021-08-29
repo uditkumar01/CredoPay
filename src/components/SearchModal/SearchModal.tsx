@@ -99,8 +99,8 @@ export function SearchModal({
     allUsers && search.length > 0
       ? allUsers.filter((user) => {
           return (
-            user.credTag !== authState.user?.credTag &&
-            user.credTag.includes(search)
+            user?.credTag !== authState.user?.credTag &&
+            user?.credTag?.includes(search)
           );
         })
       : [];

@@ -45,7 +45,12 @@ const axiosInstance = axios.create({
 });
 
 export async function transfer(payload: TransferPayload): Promise<any> {
-  const url = `/v1/transfers`;
-  const response = await axiosInstance.post(url, payload);
-  return response.data.data;
+  try {
+    const url = `/v1/transfers`;
+    const response = await axiosInstance.post(url, payload);
+    return response.data.data;
+  } catch (error) {
+    console.log(error, payload);
+    return error.response.data;
+  }
 }
