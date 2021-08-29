@@ -60,7 +60,6 @@ export default function App(): JSX.Element {
 
   useEffect(() => {
     const { assets, balance } = getBalancesAndAssets();
-    console.log("assets", assets, "balance", balance);
     if (assets && balance) {
       authDispatch({
         type: "BALANCE",
