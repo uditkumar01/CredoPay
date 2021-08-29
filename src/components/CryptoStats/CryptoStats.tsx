@@ -71,37 +71,6 @@ export const icons: Icons = {
   },
 };
 
-export const data: CryptoStatCardProps["data"][] = [
-  {
-    symbol: "BTC",
-    label: "Bitcoin",
-    value: 5604.16,
-    change: { value: 24.98, percent: -0.73 },
-    currency: "$",
-  },
-  {
-    symbol: "BCH",
-    label: "USDC",
-    value: 391.59,
-    change: { value: 30.98, percent: +1.84 },
-    currency: "$",
-  },
-  {
-    symbol: "ETH",
-    label: "Ethereum",
-    value: 177.95,
-    change: { value: 12.4, percent: -0.72 },
-    currency: "$",
-  },
-  {
-    symbol: "LTC",
-    label: "Solana",
-    value: 46.43,
-    change: { value: 33, percent: 1.82 },
-    currency: "$",
-  },
-];
-
 export const CryptoStats = (): JSX.Element => {
   const { cryptoData } = useStaticData();
   return (

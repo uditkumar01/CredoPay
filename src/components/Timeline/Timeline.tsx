@@ -18,7 +18,7 @@ export const Timeline = ({ maxW }: { maxW?: string }): JSX.Element => {
       >
         <TimelineList spacing="12">
           {transactionsHistory &&
-            transactionsHistory.map((transaction) => {
+            transactionsHistory?.map((transaction) => {
               let transactionTitle = "Transaction successful";
               if (transaction.status.toLowerCase() === "pending") {
                 transactionTitle = "Transaction in process";

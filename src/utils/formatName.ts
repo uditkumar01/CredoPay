@@ -5,6 +5,6 @@ export const formatName = (name: string): string => {
 };
 
 export const formatFullName = (name: string): string => {
-  const nameArray = name.split(" ").map(formatName);
+  const nameArray = name.split(" ")?.map(formatName);
   return nameArray.join(" ");
 };

@@ -20,7 +20,7 @@ import {
   Tooltip,
   IconButton,
 } from "@chakra-ui/react";
-import { ReactNode, useState } from "react";
+import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { RiQuestionnaireFill } from "react-icons/all";
 import { v4 } from "uuid";
 import { auth, firestore } from "../../Firebase";
@@ -38,10 +38,12 @@ export function CreateWalletModal({
   children,
   btnStyles,
   isLoading,
+  setBtnStatus,
 }: {
   children: ReactNode;
   btnStyles?: BtnStyles;
   isLoading?: boolean;
+  setBtnStatus: Dispatch<SetStateAction<string>>;
 }): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [credTag, setCredTag] = useState("");
@@ -72,6 +74,7 @@ export function CreateWalletModal({
         userRef.doc(user.uid).update({
           ...payload,
         });
+        setBtnStatus("dashboard");
       }
     } catch (err) {
       console.log("Error while updating user doc", err);
@@ -93,7 +96,7 @@ export function CreateWalletModal({
       updateUserDoc({ ...resCreateWallet, credTag });
       onClose();
       // navigate user to dashboard
-      window.location.href = "/dashboard";
+      // window.location.href = "/dashboard";
     } catch (err) {
       console.log("Error while creating wallet", err);
     }
@@ -102,7 +105,7 @@ export function CreateWalletModal({
 
   return (
     <>
-      <Button onClick={onOpen} {...btnStyles} isLoading={isLoading}>
+      <Button onClick={onOpen} {...btnStyles} isLoading={isLoading || loading}>
         {children}
       </Button>
 

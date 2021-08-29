@@ -21,8 +21,14 @@ import { ReactElement } from "react";
 import { RiAccountPinBoxFill } from "react-icons/ri";
 import { NavItem } from "..";
 import useAuth from "../../context/AuthContext/AuthContext";
+import {
+  useStaticData,
+  Wallet,
+  WalletBalance,
+} from "../../context/StaticData/StaticData";
 import { auth } from "../../Firebase";
 import { formatFullName } from "../../utils/formatName";
+import { TotalBalances } from "../CryptoStatCard/CryptoStatCard";
 import { BtnStyles } from "../PayModel/PayModel";
 
 export const Blob = (props: IconProps): JSX.Element => {
@@ -55,11 +61,49 @@ export function AccountModal({
   const { isOpen, onOpen, onClose } = useDisclosure();
   const { authState } = useAuth();
   const toast = useToast();
+  const { userWallets, cryptoData } = useStaticData();
+  // get total balance of all wallets for all currencies
+
+  let totalBalances: TotalBalances | null = null;
+  if (userWallets && userWallets.length > 0) {
+    totalBalances = userWallets.reduce(
+      (acc: TotalBalances, wallet: Wallet) => {
+        wallet.balances.forEach((balance: WalletBalance) => {
+          acc[balance.currency as keyof TotalBalances] += Number(
+            balance.amount
+          );
+        });
+        return acc;
+      },
+      {
+        USDC: 0,
+        BTC: 0,
+        ETH: 0,
+        SOL: 0,
+      } as TotalBalances
+    );
+  }
+
+  let totalBalance = 0;
+  if (totalBalances) {
+    // calculate total balance and round to 2 decimal places
+    totalBalance = cryptoData.reduce((acc: number, currency) => {
+      const tot =
+        acc +
+        (totalBalances
+          ? totalBalances[currency.symbol as keyof TotalBalances] *
+            currency.value
+          : 0);
+      return tot;
+    }, 0);
+
+    totalBalance = Math.round(totalBalance * 100) / 100;
+  }
   return (
     <>
       {!navBtn ? (
         <Button onClick={onOpen} {...btnStyles}>
-          Pay Now
+          Account Info
         </Button>
       ) : (
         <Button
@@ -109,7 +153,7 @@ export function AccountModal({
                 <Avatar
                   height="170px"
                   width="170px"
-                  src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&ixid=eyJhcHBfaWQiOjE3Nzg0fQ"
+                  src={authState?.user?.photoURL || ""}
                   alt="Author"
                   css={{
                     borderWidth: "5px",
@@ -134,7 +178,7 @@ export function AccountModal({
                   </Text>
                 </Stack>
                 <Stack spacing={0} align="center" mb={5}>
-                  <Heading>$12312.00</Heading>
+                  <Heading>${totalBalance.toFixed(2)}</Heading>
                 </Stack>
                 <Stack direction="row" justify="center" spacing={6}>
                   <Stack

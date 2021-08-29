@@ -58,7 +58,6 @@ const StaticDataContext = createContext({} as InitialValues);
 
 // https://api.coingecko.com/api/v3/coins/bitcoin
 // https://api.coingecko.com/api/v3/coins/ethereum
-// https://api.coingecko.com/api/v3/coins/solana
 
 // function to call apis to get crypto data using Promise all
 
@@ -68,11 +67,10 @@ async function getCryptoData(): Promise<any> {
     const promises = [
       axios.get("https://api.coingecko.com/api/v3/coins/bitcoin"),
       axios.get("https://api.coingecko.com/api/v3/coins/ethereum"),
-      axios.get("https://api.coingecko.com/api/v3/coins/solana"),
     ];
 
     const responses = await Promise.all(promises);
-    const resData: Array<CoinData> = responses.map((res) => {
+    const resData: Array<CoinData> = responses?.map((res) => {
       const data: CoinData = {
         symbol: res?.data?.symbol?.toUpperCase(),
         label: res?.data?.id,
@@ -155,7 +153,7 @@ export function StaticDataContextProvider({
           );
           // getting all users from firestore
           const allUsers = await firestore().collection("users").get();
-          const allUsersData = allUsers.docs.map((doc) => doc.data());
+          const allUsersData = allUsers?.docs?.map((doc) => doc.data());
           staticDataDispatch({
             type: "SET_STATIC_DATA",
             payload: {

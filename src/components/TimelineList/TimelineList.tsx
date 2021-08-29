@@ -14,7 +14,7 @@ export const TimelineList = (props: StackProps): JSX.Element => {
     () =>
       Children.toArray(children)
         .filter<ReactElement<ListItemProps>>(isValidElement)
-        .map((item, index, array) =>
+        ?.map((item, index, array) =>
           index + 1 === array.length
             ? cloneElement(item, { isLastItem: true })
             : item

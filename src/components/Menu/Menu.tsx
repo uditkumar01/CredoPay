@@ -76,7 +76,7 @@ export const Menu = (): JSX.Element => {
           shadow="lg"
         >
           <Box as="ul" listStyleType="none" px="2" pb="2">
-            {links.map((link, index) => (
+            {links?.map((link, index) => (
               <Box as="li" key={index.toString()}>
                 <MenuItem
                   icon={link.icon}

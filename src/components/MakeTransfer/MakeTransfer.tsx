@@ -141,7 +141,7 @@ export function MakeTransfer({
     <>
       {!navBtn ? (
         <Button onClick={onOpen} {...btnStyles}>
-          Transfer Creds
+          Transfer
         </Button>
       ) : (
         <Button
@@ -154,7 +154,7 @@ export function MakeTransfer({
           }}
           onClick={onOpen}
         >
-          <NavItem icon={<MdTransferWithinAStation />} label="Transfer Creds" />
+          <NavItem icon={<MdTransferWithinAStation />} label="Transfer" />
         </Button>
       )}
 

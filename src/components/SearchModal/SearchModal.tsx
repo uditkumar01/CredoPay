@@ -154,7 +154,7 @@ export function SearchModal({
                 </Stack>
               </Center>
             ) : (
-              filteredUsersFromQuery.map((userItem) => {
+              filteredUsersFromQuery?.map((userItem) => {
                 return (
                   <SearchResult
                     key={userItem.uid}

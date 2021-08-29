@@ -50,47 +50,51 @@ export default function Home(): JSX.Element {
   const {
     signIn,
     authState: { isLoggedIn },
+    showLoadingScreen,
   } = useAuth();
-  const [btnLoading, setBtnLoading] = useState(true);
+  const [btnLoading, setBtnLoading] = useState(false);
   const [btnStatus, setBtnStatus] = useState("signin");
   // get user from firestore using email
   useEffect(() => {
-    const email = auth()?.currentUser?.email;
-    let progressBtn = "signin";
-    if (email) {
-      console.log(email);
+    if (!showLoadingScreen && isLoggedIn) {
+      const email = auth()?.currentUser?.email;
+      let progressBtn = "signin";
+      if (email) {
+        setBtnLoading(true);
+        console.log(email);
 
-      (async () => {
-        let userRef = firestore().collection("users");
-        // getting user if his email is found in firestore
-        let snapshot = await userRef.where("email", "==", email).get();
-        if (snapshot.empty) {
-          await createUserEntity(auth().currentUser);
-          userRef = firestore().collection("users");
+        (async () => {
+          let userRef = firestore().collection("users");
           // getting user if his email is found in firestore
-          snapshot = await userRef.where("email", "==", email).get();
-        }
-
-        const user = snapshot.docs[0].data();
-        console.log(user);
-        try {
-          const res = await getWalletInfo(user?.walletId || "");
-          console.log({ res });
-          if (res) {
-            progressBtn = "dashboard";
-          } else {
-            progressBtn = "wallet";
+          let snapshot = await userRef.where("email", "==", email).get();
+          if (snapshot.empty) {
+            await createUserEntity(auth().currentUser);
+            userRef = firestore().collection("users");
+            // getting user if his email is found in firestore
+            snapshot = await userRef.where("email", "==", email).get();
           }
-        } catch (e) {
-          console.log("error while checking wallet id", e);
-        }
-        console.log({ progressBtn });
-        setBtnStatus(progressBtn);
-      })();
+
+          const user = snapshot.docs[0].data();
+          console.log(user);
+          try {
+            const res = await getWalletInfo(user?.walletId || "");
+            console.log({ res });
+            if (res) {
+              progressBtn = "dashboard";
+            } else {
+              progressBtn = "wallet";
+            }
+          } catch (e) {
+            console.log("error while checking wallet id", e);
+          }
+          console.log({ progressBtn });
+          setBtnStatus(progressBtn);
+        })();
+      }
+      console.log(progressBtn, "progress");
+      setBtnLoading(false);
     }
-    console.log(progressBtn, "progress");
-    setBtnLoading(false);
-  });
+  }, [showLoadingScreen, isLoggedIn]);
   console.log(btnStatus, "btn status");
 
   const getDashBoardBtn = (): JSX.Element => {
@@ -128,6 +132,7 @@ export default function Home(): JSX.Element {
               leftIcon: <Image src="/svgs/logo.svg" h="26px" />,
             }}
             isLoading={btnLoading}
+            setBtnStatus={setBtnStatus}
           >
             <Center>
               <Text>Create your Wallet</Text>
