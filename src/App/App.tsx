@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import socketIO from "socket.io-client";
 import "./App.css";
 import AllRoutes from "../pages";
 import useAuth from "../context/AuthContext/AuthContext";
@@ -10,10 +11,15 @@ import {
 } from "../context/StaticData/StaticData";
 import { TotalBalances } from "../context/AuthContext/AuthReducer.types";
 
+const io: any = socketIO;
+
+const socket = io.connect("https://credopaynotifications.uditkumar01.repl.co");
+
 export default function App(): JSX.Element {
   const { showLoadingScreen } = useAuth();
   const { authDispatch } = useAuth();
-  const { userWallets, cryptoData } = useStaticData();
+  const { userWallets, cryptoData, setTrigger } = useStaticData();
+
   function getBalancesAndAssets(): {
     balance: number;
     assets: TotalBalances | null;
@@ -57,6 +63,21 @@ export default function App(): JSX.Element {
     }
     return { assets: totalBalances, balance: totalBalance || 0 };
   }
+
+  useEffect(() => {
+    // socket listener on to get updated transactions status
+    (() => {
+      socket.on("notification", async (rawData: any) => {
+        const data = JSON.parse(rawData);
+        console.log("data hereeeee", data);
+        setTrigger((prev) => (prev === 0 ? 1 : 0));
+      });
+    })();
+    // socket off on unmount
+    return () => {
+      socket.off("notification");
+    };
+  }, []);
 
   useEffect(() => {
     const { assets, balance } = getBalancesAndAssets();

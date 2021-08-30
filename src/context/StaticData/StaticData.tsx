@@ -5,6 +5,9 @@ import {
   useContext,
   useReducer,
   useEffect,
+  useState,
+  Dispatch,
+  SetStateAction,
 } from "react";
 import { firestore } from "../../Firebase";
 import { getBlockchainAddresses } from "../../lib/getCryptoAddresses";
@@ -55,7 +58,11 @@ interface InitialValues {
   allUsers: Array<AuthUserType>;
 }
 
-const StaticDataContext = createContext({} as InitialValues);
+interface StaticDataContextValue extends InitialValues {
+  setTrigger: Dispatch<SetStateAction<number>>;
+}
+
+const StaticDataContext = createContext({} as StaticDataContextValue);
 
 // https://api.coingecko.com/api/v3/coins/bitcoin
 // https://api.coingecko.com/api/v3/coins/ethereum
@@ -128,6 +135,7 @@ export function StaticDataContextProvider({
     staticDataReducer,
     {} as InitialValues
   );
+  const [trigger, setTrigger] = useState(0);
   const { authState, showLoadingScreen } = useAuth();
 
   async function getUserWallets(): Promise<any> {
@@ -166,19 +174,19 @@ export function StaticDataContextProvider({
         }
       })();
     }
-  }, [authState.isLoggedIn, showLoadingScreen]);
+  }, [authState.isLoggedIn, showLoadingScreen, trigger]);
 
   console.log("staticDataState", staticDataState);
 
   return (
-    <StaticDataContext.Provider value={staticDataState}>
+    <StaticDataContext.Provider value={{ ...staticDataState, setTrigger }}>
       {children}
     </StaticDataContext.Provider>
   );
 }
 
 // custom hook to get static data
-export function useStaticData(): InitialValues {
+export function useStaticData(): StaticDataContextValue {
   const staticData = useContext(StaticDataContext);
   if (!staticData) {
     throw new Error("useStaticData must be used within a StaticDataContext");

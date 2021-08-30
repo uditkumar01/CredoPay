@@ -88,6 +88,7 @@ export function AuthProvider({
       observer();
     };
   }, []);
+
   return (
     <AuthContext.Provider
       value={{
