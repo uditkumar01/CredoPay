@@ -209,9 +209,9 @@ export default function Home(): JSX.Element {
               </Text>
             </Heading>
             <Text color="gray.500">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Nam, in
-              sed corrupti deserunt eligendi nisi sint, cupiditate voluptate
-              ducimus est . Velit.
+              Credopay is the solution which helps you pay your bills using your
+              crypto assets.This platform is build for NFT Vision hackathon
+              2021. This is the BETA version of our product.
             </Text>
             <Stack
               spacing={{ base: 4, sm: 6 }}
