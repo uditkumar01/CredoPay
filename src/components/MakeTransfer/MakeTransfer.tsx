@@ -132,9 +132,8 @@ export function MakeTransfer({
     });
 
     console.log(res);
-
-    setReceiverAddress("");
     onClose();
+    setReceiverAddress("");
     return null;
   }
 

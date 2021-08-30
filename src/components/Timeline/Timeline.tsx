@@ -1,6 +1,7 @@
 import { Box } from "@chakra-ui/react";
 import moment from "moment";
 import { TimelineBox, TimelineList, TimelineListItem } from "..";
+import useAuth from "../../context/AuthContext/AuthContext";
 import { useHistoryData } from "../../context/HistoryData/HistoryData";
 import { removeUnderscores } from "../../utils/removeUnderscores";
 
@@ -8,6 +9,17 @@ export const Timeline = ({ maxW }: { maxW?: string }): JSX.Element => {
   const {
     historyDataState: { transactionsHistory },
   } = useHistoryData();
+  const { authState } = useAuth();
+  let sortedTransactions = transactionsHistory;
+  if (transactionsHistory && authState?.user?.transactions) {
+    sortedTransactions = [
+      ...transactionsHistory,
+      ...authState?.user?.transactions,
+    ];
+    sortedTransactions.sort((a: any, b: any) => {
+      return (new Date(b.createDate) as any) - (new Date(a.createDate) as any);
+    });
+  }
   return (
     <Box as="section" w="full" maxW="100vw">
       <Box
@@ -18,11 +30,11 @@ export const Timeline = ({ maxW }: { maxW?: string }): JSX.Element => {
       >
         <TimelineList spacing="12">
           {transactionsHistory &&
-            transactionsHistory?.map((transaction) => {
+            sortedTransactions?.map((transaction) => {
               let transactionTitle = "Transaction successful";
-              if (transaction.status.toLowerCase() === "pending") {
+              if (transaction?.status?.toLowerCase() === "pending") {
                 transactionTitle = "Transaction in process";
-              } else if (transaction.status.toLowerCase() === "failed") {
+              } else if (transaction?.status?.toLowerCase() === "failed") {
                 transactionTitle = removeUnderscores(
                   transaction?.errorCode || ""
                 );
@@ -35,7 +47,7 @@ export const Timeline = ({ maxW }: { maxW?: string }): JSX.Element => {
                   subTitle={moment(transaction.createDate).format("LLL")}
                   status={transaction?.status}
                 >
-                  <TimelineBox {...transaction} />
+                  <TimelineBox key={`${transaction.id}box`} {...transaction} />
                 </TimelineListItem>
               );
             })}

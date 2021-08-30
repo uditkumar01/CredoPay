@@ -1,3 +1,4 @@
+import { Transaction } from "../HistoryData/HistoryData";
 import { AuthUserType } from "./AuthContext.types";
 
 export type AuthActionLoginType = {
@@ -20,6 +21,11 @@ export type AuthActionAssetsType = {
   payload: TotalBalances;
 };
 
+export type AuthActionTransactionType = {
+  type: "UPDATE_TRANSACTION";
+  payload: Array<Transaction>;
+};
+
 export interface TotalBalances {
   USDC: number;
   BTC: number;
@@ -30,4 +36,5 @@ export type AuthActionType =
   | AuthActionLoginType
   | AuthActionLogoutType
   | AuthActionBalanceType
-  | AuthActionAssetsType;
+  | AuthActionAssetsType
+  | AuthActionTransactionType;

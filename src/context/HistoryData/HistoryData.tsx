@@ -1,4 +1,5 @@
 import { useToast } from "@chakra-ui/react";
+import userEvent from "@testing-library/user-event";
 import {
   createContext,
   useContext,
@@ -101,11 +102,18 @@ export function HistoryDataContextProvider({
       authState?.user?.walletId || ""
     );
 
-    console.log({ newHistoryData });
+    // sort in descending order of createDate
+    const sortedData = [...newHistoryData];
+
+    sortedData.sort((a: any, b: any) => {
+      return (new Date(b.createDate) as any) - (new Date(a.createDate) as any);
+    });
+
+    console.log({ sortedData });
 
     historyDataDispatch({
       type: "SET_HISTORY_DATA",
-      payload: { transactionsHistory: newHistoryData },
+      payload: { transactionsHistory: [...sortedData] },
     });
   };
 

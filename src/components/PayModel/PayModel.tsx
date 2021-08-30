@@ -14,11 +14,21 @@ import {
   Input,
   Divider,
   DarkMode,
+  Stack,
+  FormLabel,
+  useToast,
+  Select,
 } from "@chakra-ui/react";
 import QrReader from "react-qr-reader";
 import { ReactElement, useRef, useState } from "react";
 import { BiCreditCard } from "react-icons/bi";
+import { v4 } from "uuid";
 import { NavItem } from "../NavItem/NavItem";
+import { initiateTransfer, parseUpi } from "../../lib/createDecentroTransfer";
+import useAuth from "../../context/AuthContext/AuthContext";
+import { firestore } from "../../Firebase";
+import { transfer, TransferPayload } from "../../lib/transferApi";
+import { useStaticData } from "../../context/StaticData/StaticData";
 
 export interface BtnStyles {
   [key: string]:
@@ -40,11 +50,25 @@ export function PayModel({
 }): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef(null);
+  const { authState, authDispatch } = useAuth();
+  const { cryptoData } = useStaticData();
+  // const [decodedString, setDecodedString] = useState<{ pa: ""; am: "" } | null>(
+  //   null
+  // );
+  const [currency, setCurrency] = useState<string>("ETH");
+  const [upi, setUpi] = useState("");
+  const [amount, setAmount] = useState("");
+  const toast = useToast();
 
-  const [decodedString, setDecodedString] = useState("");
   const handleScan = (data: string | null): void => {
     if (data) {
-      setDecodedString(data);
+      const decoded = parseUpi(data);
+      if (decoded && decoded?.am) {
+        setAmount(decoded?.am);
+      }
+      if (decoded && decoded?.pa) {
+        setUpi(decoded?.pa);
+      }
     }
   };
   const handleError = (err: string): void => {
@@ -52,6 +76,83 @@ export function PayModel({
     console.error(err);
     /* eslint-enable no-console */
   };
+
+  // submission handler
+  async function handleSubmit(): Promise<void> {
+    onClose();
+    try {
+      const idempotencyKey = v4();
+      const res = await initiateTransfer(
+        idempotencyKey,
+        upi,
+        amount,
+        authState?.user?.walletId || "creadopay"
+      );
+      console.log(res);
+      const transactions = [...(authState?.user?.transactions || [])];
+      transactions.unshift({
+        id: idempotencyKey,
+        amount: {
+          amount,
+          currency: "INR",
+        },
+        source: {
+          type: "wallet",
+          id: authState?.user?.walletId || "creadopay",
+        },
+        destination: {
+          type: "wallet",
+          id: upi,
+        },
+        status: res?.status === "success" ? "complete" : "failed",
+        createDate: new Date().toISOString(),
+      });
+      // update current user firebase modal
+      const userDoc = await firestore()
+        .collection("users")
+        .doc(authState?.user?.uid)
+        .update({
+          transactions,
+        });
+      console.log(userDoc);
+      // update current user local state
+      authDispatch({
+        type: "UPDATE_TRANSACTION",
+        payload: transactions,
+      });
+
+      // convert n inr to eth
+
+      const ethValue = cryptoData.find((c) => c.symbol === "ETH")?.value;
+
+      const inrToEthAmount = Number(amount) / Number(ethValue);
+
+      const payload: TransferPayload = {
+        source: { type: "wallet", id: authState.user?.walletId || "" },
+        destination: { type: "wallet", id: "1000128582" },
+        amount: { amount: `${inrToEthAmount}`, currency },
+        idempotencyKey: v4(),
+      };
+
+      const resTransfer = await transfer(payload);
+
+      console.log({ payload, resTransfer });
+
+      // success toast for payment
+
+      toast({
+        title: "Payment Successful",
+        description: `You have successfully paid ${amount} to ${upi}`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  console.log(currency);
 
   return (
     <DarkMode>
@@ -99,30 +200,72 @@ export function PayModel({
                   onScan={handleScan}
                   style={{ width: "100%" }}
                 />
-                <Text m="1rem 0">{decodedString}</Text>
               </Flex>
               <Divider mb="2rem" />
-              <Flex align="flex-end" mt="1rem">
-                <FormControl id="upi" mr="1rem">
+              <Stack align="center" spacing={3} mt="1rem" w="full">
+                <FormControl id="upi">
+                  <FormLabel htmlFor="upi-address">
+                    <Text fontWeight="bold">UPI Address</Text>
+                  </FormLabel>
                   <Input
                     type="upi"
+                    name="upi-address"
                     borderColor="black.300"
                     placeholder="UPI address"
+                    value={upi}
+                    onChange={(e): void => setUpi(e.target.value)}
                   />
                 </FormControl>
-                <Button
-                  bg="brand.600"
-                  _hover={{
-                    bg: "brand.700",
-                  }}
-                  m="0"
-                >
-                  Pay now
-                </Button>
-              </Flex>
+
+                <FormControl>
+                  <FormLabel color="whiteAlpha.800" htmlFor="chain">
+                    Currency
+                  </FormLabel>
+                  <Select
+                    name="chain"
+                    borderColor="gray.600"
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                  >
+                    {["USD", "ETH", "BTC"].map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
+
+                <FormControl id="upi">
+                  <FormLabel htmlFor="amount-pay">
+                    <Text fontWeight="bold">Amount</Text>
+                  </FormLabel>
+                  <Input
+                    name="amount-pay"
+                    type="upi"
+                    borderColor="black.300"
+                    placeholder="Amount"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                  />
+                </FormControl>
+              </Stack>
             </Flex>
           </ModalBody>
-          <ModalFooter> {decodedString}</ModalFooter>
+          <ModalFooter>
+            <Stack align="center" w="full">
+              <Button
+                bg="brand.600"
+                color="black.900"
+                _hover={{
+                  bg: "brand.700",
+                }}
+                onClick={handleSubmit}
+                isDisabled={!upi || !amount}
+              >
+                Pay now
+              </Button>
+            </Stack>
+          </ModalFooter>
         </ModalContent>
       </Modal>
     </DarkMode>

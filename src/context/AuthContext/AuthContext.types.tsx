@@ -1,24 +1,26 @@
 import { Dispatch } from "react";
+import { Transaction } from "../HistoryData/HistoryData";
 import { WalletBalance } from "../StaticData/StaticData";
 import { AuthActionType, TotalBalances } from "./AuthReducer.types";
 
 export interface AuthUserType {
-  uid: string;
-  displayName: string;
-  email: string;
-  photoURL: string;
-  walletId: string;
-  entityId: string;
-  type: string;
-  description: string;
-  credTag: string;
-  balances: Array<WalletBalance>;
-  ethAddresses: Array<{
+  uid?: string;
+  displayName?: string;
+  email?: string;
+  photoURL?: string;
+  walletId?: string;
+  entityId?: string;
+  type?: string;
+  description?: string;
+  credTag?: string;
+  balances?: Array<WalletBalance>;
+  ethAddresses?: Array<{
     address: string;
     chain: number;
     currency: string;
     idempotencyKey: string;
   }>;
+  transactions?: Array<Transaction>;
 }
 export interface AuthInitialStateType {
   isLoggedIn: boolean;

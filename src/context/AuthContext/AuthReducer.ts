@@ -26,6 +26,15 @@ export function authReducer(
         ...state,
         assets: action.payload,
       };
+    case "UPDATE_TRANSACTION":
+      console.log(action.payload, "focus");
+      return {
+        ...state,
+        user: {
+          ...state.user,
+          transactions: [...action.payload],
+        },
+      };
     default:
       return state;
   }

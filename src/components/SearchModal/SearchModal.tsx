@@ -41,7 +41,7 @@ function SearchResult({
       w="full"
       color="whiteAlpha.900"
       height="full"
-      onClick={() => onClick(walletId)}
+      onClick={() => onClick(walletId || "")}
     >
       <HStack
         spacing={3}
