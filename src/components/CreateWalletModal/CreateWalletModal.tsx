@@ -20,11 +20,13 @@ import {
   Tooltip,
   IconButton,
   DarkMode,
+  FormHelperText,
 } from "@chakra-ui/react";
 import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { RiQuestionnaireFill } from "react-icons/all";
 import { v4 } from "uuid";
 import useAuth from "../../context/AuthContext/AuthContext";
+import { useStaticData } from "../../context/StaticData/StaticData";
 import { auth, firestore } from "../../Firebase";
 import { createUserEntity } from "../../Firebase/User";
 import { createETHAddress } from "../../lib/createETHAddress";
@@ -58,6 +60,8 @@ export function CreateWalletModal({
   const [credTag, setCredTag] = useState("");
   const [loading, setLoading] = useState(false);
   const { authState } = useAuth();
+  const { allUsers } = useStaticData();
+  const [alreadyUsed, setAlreadyUsed] = useState(false);
 
   const colors = ["gray", "cyan", "blue", "teal", "blue", "teal", "blue"];
 
@@ -171,11 +175,25 @@ export function CreateWalletModal({
                     <Input
                       id="credTag"
                       color="whiteAlpha.900"
+                      isInvalid={alreadyUsed}
                       placeholder={`For example ${
                         auth().currentUser?.displayName?.split(" ")[0] ||
                         "rohan"
                       }0110`}
-                      onChange={(e) => setCredTag(e.target.value)}
+                      onChange={(e) => {
+                        if (
+                          allUsers &&
+                          !allUsers?.some(
+                            (user) =>
+                              user?.credTag?.toLowerCase() ===
+                              e.target.value?.toLowerCase()
+                          )
+                        ) {
+                          setCredTag(e.target.value);
+                        } else {
+                          setAlreadyUsed(true);
+                        }
+                      }}
                     />
                     <InputRightElement>
                       <Tooltip
@@ -192,6 +210,10 @@ export function CreateWalletModal({
                       </Tooltip>
                     </InputRightElement>
                   </InputGroup>
+                  <FormHelperText color="red.400" h="20px">
+                    {alreadyUsed &&
+                      `${credTag} is already in use. Please try another one.`}
+                  </FormHelperText>
                 </FormControl>
                 <Stack spacing={4}>
                   <Button
@@ -201,7 +223,7 @@ export function CreateWalletModal({
                       bg: "blue.500",
                     }}
                     onClick={onSubmitHandler}
-                    isDisabled={credTag.length < 6}
+                    isDisabled={credTag.length < 6 || alreadyUsed}
                   >
                     Create Wallet
                   </Button>
