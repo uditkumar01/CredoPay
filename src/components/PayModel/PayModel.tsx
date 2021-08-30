@@ -83,6 +83,27 @@ export function PayModel({
   async function handleSubmit(): Promise<void> {
     onClose();
     try {
+      // convert n inr to eth
+
+      const ethValue = cryptoData.find((c) => c.symbol === "ETH")?.value;
+      const USDValue = 73.5;
+      let inrToEthAmount = Number((Number(amount) / USDValue).toFixed(2));
+      if (currency === "ETH") {
+        inrToEthAmount = Number(amount) / Number(ethValue);
+      }
+
+      const payload: TransferPayload = {
+        source: { type: "wallet", id: authState.user?.walletId || "" },
+        destination: { type: "wallet", id: "1000128582" },
+        amount: {
+          amount: `${inrToEthAmount}`,
+          currency: currency === "USDC" ? "USD" : currency,
+        },
+        idempotencyKey: v4(),
+      };
+
+      const resTransfer = await transfer(payload);
+
       const idempotencyKey = v4();
       const res = await initiateTransfer(
         idempotencyKey,
@@ -123,21 +144,6 @@ export function PayModel({
         payload: transactions,
       });
 
-      // convert n inr to eth
-
-      const ethValue = cryptoData.find((c) => c.symbol === "ETH")?.value;
-
-      const inrToEthAmount = Number(amount) / Number(ethValue);
-
-      const payload: TransferPayload = {
-        source: { type: "wallet", id: authState.user?.walletId || "" },
-        destination: { type: "wallet", id: "1000128582" },
-        amount: { amount: `${inrToEthAmount}`, currency },
-        idempotencyKey: v4(),
-      };
-
-      const resTransfer = await transfer(payload);
-
       console.log({ payload, resTransfer });
 
       // success toast for payment
@@ -151,6 +157,14 @@ export function PayModel({
       });
     } catch (error) {
       console.log(error);
+      // failed toast for payment
+      toast({
+        title: "Payment Failed",
+        description: `You have failed to pay ${amount} to ${upi}`,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
   }
 
