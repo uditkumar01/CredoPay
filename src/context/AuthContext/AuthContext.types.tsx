@@ -21,6 +21,7 @@ export interface AuthUserType {
     idempotencyKey: string;
   }>;
   transactions?: Array<Transaction>;
+  pendingTransactions?: Array<any>;
 }
 export interface AuthInitialStateType {
   isLoggedIn: boolean;

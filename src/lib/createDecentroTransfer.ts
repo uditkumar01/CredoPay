@@ -2,6 +2,7 @@ import axios from "axios";
 import * as dotenv from "dotenv";
 import quertString from "query-string";
 import { v4 } from "uuid";
+import { firestore } from "../Firebase";
 
 dotenv.config();
 // add allow origin in axios instance
@@ -37,11 +38,59 @@ export function parseUpi(upi: string): any {
   }
 }
 
-export async function initiateTransfer(
+export async function initiateTransfer(data: any, uid: string): Promise<any> {
+  const url = "https://credopaynotifications.uditkumar01.repl.co/pay";
+  try {
+    if (data?.status === "complete") {
+      const userRef = await firestore().collection("users").doc(uid).get();
+      const userData = userRef.data();
+      const payload = userData?.pendingTransfers?.find((transfer: any) => {
+        // console.log(
+        //   transfer,
+        //   transfer?.source,
+        //   data?.source,
+        //   transfer?.destination,
+        //   data?.destination,
+        //   Number(transfer?.inrToEthAmount)?.toFixed(8),
+        //   Number(data?.amount)?.toFixed(8),
+        //   transfer?.source === data?.source,
+        //   transfer?.destination === data?.destination,
+        //   Number(transfer?.inrToEthAmount)?.toFixed(8) ===
+        //     Number(data?.amount)?.toFixed(8)
+        // );
+        return (
+          transfer?.source === data?.source &&
+          transfer?.destination === data?.destination &&
+          Number(transfer?.inrToEthAmount)?.toFixed(8) ===
+            Number(data?.amount)?.toFixed(8)
+        );
+      });
+      console.log(payload, userData, "testing");
+      const res = await axios.post(url, payload?.payload);
+      console.log(res.data?.data);
+      return {
+        success: true,
+        ...payload?.payload,
+      };
+    }
+
+    return { success: false };
+  } catch (err) {
+    console.log(err.message);
+    return { success: false };
+  }
+}
+
+export async function queneTransfer(
   idempotencyKey: string,
   upi: string,
   amount: string,
-  payeeName: string
+  payeeName: string,
+  uid: string,
+  pendingTransfers: any,
+  inrToEthAmount: number,
+  source: string,
+  destination: string
 ): Promise<any> {
   const payload = {
     reference_id: idempotencyKey,
@@ -67,13 +116,19 @@ export async function initiateTransfer(
   };
 
   console.log(payload, "payload");
-
-  const url = "https://credopaynotifications.uditkumar01.repl.co/pay";
   try {
-    const res = await axios.post(url, payload);
-    console.log(res.data?.data);
+    // quene transfer on firebase
+    await firestore()
+      .collection("users")
+      .doc(uid)
+      .update({
+        pendingTransfers: [
+          ...(pendingTransfers || []),
+          { inrToEthAmount, source, destination, payload },
+        ],
+      });
 
-    return res.data?.data;
+    return payload;
   } catch (err) {
     console.log(err.message);
     return err.message;

@@ -26,7 +26,11 @@ import { ReactElement, useRef, useState } from "react";
 import { BiCreditCard } from "react-icons/bi";
 import { v4 } from "uuid";
 import { NavItem } from "../NavItem/NavItem";
-import { initiateTransfer, parseUpi } from "../../lib/createDecentroTransfer";
+import {
+  initiateTransfer,
+  parseUpi,
+  queneTransfer,
+} from "../../lib/createDecentroTransfer";
 import useAuth from "../../context/AuthContext/AuthContext";
 import { firestore } from "../../Firebase";
 import { transfer, TransferPayload } from "../../lib/transferApi";
@@ -84,6 +88,7 @@ export function PayModel({
     onClose();
     try {
       // convert n inr to eth
+      const idempotencyKey = v4();
 
       const ethValue = cryptoData.find((c) => c.symbol === "ETH")?.value;
       const USDValue = 73.5;
@@ -99,62 +104,73 @@ export function PayModel({
           amount: `${inrToEthAmount}`,
           currency: currency === "USDC" ? "USD" : currency,
         },
-        idempotencyKey: v4(),
+        idempotencyKey,
       };
 
       const resTransfer = await transfer(payload);
 
-      const idempotencyKey = v4();
-      const res = await initiateTransfer(
+      await queneTransfer(
         idempotencyKey,
         upi,
         amount,
-        authState?.user?.walletId || "creadopay"
+        authState?.user?.walletId || "creadopay",
+        authState?.user?.uid || "",
+        authState?.user?.pendingTransactions || [],
+        inrToEthAmount,
+        authState.user?.walletId || "",
+        "1000128582"
       );
-      console.log(res);
-      const transactions = [...(authState?.user?.transactions || [])];
-      transactions.unshift({
-        id: idempotencyKey,
-        amount: {
-          amount,
-          currency: "INR",
-        },
-        source: {
-          type: "wallet",
-          id: authState?.user?.walletId || "creadopay",
-        },
-        destination: {
-          type: "wallet",
-          id: upi,
-        },
-        status: res?.status === "success" ? "complete" : "failed",
-        createDate: new Date().toISOString(),
-      });
-      // update current user firebase modal
-      const userDoc = await firestore()
-        .collection("users")
-        .doc(authState?.user?.uid)
-        .update({
-          transactions,
-        });
-      console.log(userDoc);
-      // update current user local state
-      authDispatch({
-        type: "UPDATE_TRANSACTION",
-        payload: transactions,
-      });
 
-      console.log({ payload, resTransfer });
+      // const res = await initiateTransfer(
+      //   idempotencyKey,
+      //   upi,
+      //   amount,
+      //   authState?.user?.walletId || "creadopay"
+      // );
+      // console.log(res);
+      // const transactions = [...(authState?.user?.transactions || [])];
+      // transactions.unshift({
+      //   id: idempotencyKey,
+      //   amount: {
+      //     amount,
+      //     currency: "INR",
+      //   },
+      //   source: {
+      //     type: "wallet",
+      //     id: authState?.user?.walletId || "creadopay",
+      //   },
+      //   destination: {
+      //     type: "wallet",
+      //     id: upi,
+      //   },
+      //   status: res?.status === "success" ? "complete" : "failed",
+      //   createDate: new Date().toISOString(),
+      // });
+      // update current user firebase modal
+      // const userDoc = await firestore()
+      //   .collection("users")
+      //   .doc(authState?.user?.uid)
+      //   .update({
+      //     transactions,
+      //   });
+      // console.log(userDoc);
+      // update current user local state
+      // authDispatch({
+      //   type: "UPDATE_TRANSACTION",
+      //   payload: transactions,
+      // });
+
+      // console.log({ payload, resTransfer });
 
       // success toast for payment
 
-      toast({
-        title: "Payment Successful",
-        description: `You have successfully paid ${amount} to ${upi}`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
+      // toast({
+      //   title: "Payment Successful",
+      //   description: `You have successfully paid ${amount} to ${upi}`,
+      //   status: "success",
+      //   duration: 5000,
+      //   isClosable: true,
+      // });
     } catch (error) {
       console.log(error);
       // failed toast for payment
