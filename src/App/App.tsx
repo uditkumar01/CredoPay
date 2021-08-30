@@ -28,7 +28,7 @@ export default function App(): JSX.Element {
     if (userWallets && userWallets.length > 0) {
       totalBalances = userWallets.reduce(
         (acc: TotalBalances, wallet: Wallet) => {
-          wallet.balances.forEach((balance: WalletBalance) => {
+          wallet?.balances?.forEach((balance: WalletBalance) => {
             if (balance.currency.includes("USD")) {
               acc.USDC += Number(balance.amount);
             } else {
@@ -49,7 +49,7 @@ export default function App(): JSX.Element {
     let totalBalance = 0;
     if (totalBalances) {
       // calculate total balance and round to 2 decimal places
-      totalBalance = cryptoData.reduce((acc: number, currency) => {
+      totalBalance = cryptoData?.reduce((acc: number, currency) => {
         const tot =
           acc +
           (totalBalances

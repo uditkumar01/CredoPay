@@ -16,6 +16,7 @@ import {
   Image,
   HStack,
   Badge,
+  Avatar,
 } from "@chakra-ui/react";
 import { Dispatch, SetStateAction, useRef, useState } from "react";
 import { BiSearch } from "react-icons/bi";
@@ -40,7 +41,7 @@ function SearchResult({
       variant="unstyled"
       w="full"
       color="whiteAlpha.900"
-      height="full"
+      height="90px"
       onClick={() => onClick(walletId || "")}
     >
       <HStack
@@ -57,12 +58,10 @@ function SearchResult({
           borderColor: "black.800",
         }}
       >
-        <Image
-          src={photoURL}
-          alt={displayName}
-          w="50px"
-          h="50px"
-          rounded="md"
+        <Avatar
+          borderRadius="md"
+          name={displayName?.charAt(0) || ""}
+          src={photoURL || ""}
         />
         <Stack spacing={1}>
           <Heading fontSize="1.1rem">
@@ -89,6 +88,12 @@ export function SearchModal({
   const { allUsers } = useStaticData();
   const [search, setSearch] = useState("");
   const { authState } = useAuth();
+
+  const getCredTagFromAddress = (address: string): string => {
+    return (
+      allUsers.find((user) => user.walletId === address)?.credTag || address
+    );
+  };
 
   function handleSetValue(value: string): void {
     setValue(value);
@@ -120,7 +125,9 @@ export function SearchModal({
         textAlign="left"
         onClick={onOpen}
       >
-        {addressValue || "Reciever's Wallet Id"}
+        {addressValue
+          ? getCredTagFromAddress(addressValue)
+          : "Reciever's Wallet Id"}
       </Box>
 
       <Modal

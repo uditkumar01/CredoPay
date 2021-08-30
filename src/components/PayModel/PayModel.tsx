@@ -18,6 +18,8 @@ import {
   FormLabel,
   useToast,
   Select,
+  InputGroup,
+  InputLeftAddon,
 } from "@chakra-ui/react";
 import QrReader from "react-qr-reader";
 import { ReactElement, useRef, useState } from "react";
@@ -203,6 +205,27 @@ export function PayModel({
               </Flex>
               <Divider mb="2rem" />
               <Stack align="center" spacing={3} mt="1rem" w="full">
+                <FormControl>
+                  <FormLabel
+                    color="whiteAlpha.800"
+                    fontWeight="bold"
+                    htmlFor="chain"
+                  >
+                    Currency
+                  </FormLabel>
+                  <Select
+                    name="chain"
+                    borderColor="gray.600"
+                    value={currency}
+                    onChange={(e) => setCurrency(e.target.value)}
+                  >
+                    {["USDC", "ETH", "BTC"].map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </Select>
+                </FormControl>
                 <FormControl id="upi">
                   <FormLabel htmlFor="upi-address">
                     <Text fontWeight="bold">UPI Address</Text>
@@ -217,36 +240,21 @@ export function PayModel({
                   />
                 </FormControl>
 
-                <FormControl>
-                  <FormLabel color="whiteAlpha.800" htmlFor="chain">
-                    Currency
-                  </FormLabel>
-                  <Select
-                    name="chain"
-                    borderColor="gray.600"
-                    value={currency}
-                    onChange={(e) => setCurrency(e.target.value)}
-                  >
-                    {["USD", "ETH", "BTC"].map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </Select>
-                </FormControl>
-
                 <FormControl id="upi">
                   <FormLabel htmlFor="amount-pay">
                     <Text fontWeight="bold">Amount</Text>
                   </FormLabel>
-                  <Input
-                    name="amount-pay"
-                    type="upi"
-                    borderColor="black.300"
-                    placeholder="Amount"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                  />
+                  <InputGroup>
+                    <InputLeftAddon>₹</InputLeftAddon>
+                    <Input
+                      name="amount-pay"
+                      type="upi"
+                      borderColor="black.300"
+                      placeholder="Amount"
+                      value={amount}
+                      onChange={(e) => setAmount(e.target.value)}
+                    />
+                  </InputGroup>
                 </FormControl>
               </Stack>
             </Flex>

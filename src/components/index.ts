@@ -26,3 +26,4 @@ export { CreateWalletModal } from "./CreateWalletModal/CreateWalletModal";
 export { AccountModal } from "./AccountModal/AccountModal";
 export { LoadingScreen } from "./LoadingScreen/LoadingScreen";
 export { SearchModal } from "./SearchModal/SearchModal";
+export { TransactionInfoModal } from "./TransactionInfoModal/TransactionInfoModal";

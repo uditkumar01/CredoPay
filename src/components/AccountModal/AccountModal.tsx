@@ -117,7 +117,13 @@ export function AccountModal({
                   as={Blob}
                 />
               </Box>
-              <Flex pos="relative" zIndex="1" justify="center" mt={-20}>
+              <Flex
+                pos="relative"
+                zIndex="1"
+                flexDir="column"
+                align="center"
+                mt={-20}
+              >
                 <Avatar
                   height="170px"
                   width="170px"
@@ -128,12 +134,37 @@ export function AccountModal({
                     borderColor: "cyan",
                   }}
                 />
+                <Text
+                  as={Badge}
+                  fontSize="xs"
+                  color="blue.900"
+                  bg="cyan.600"
+                  p="0.2rem 0.5rem"
+                  rounded="full"
+                  pos="relative"
+                  top="-0.7rem"
+                >
+                  Test network
+                </Text>
               </Flex>
 
-              <Box p={6} pos="relative" zIndex="1">
-                <Stack spacing={1} align="center" mb={5}>
+              <Box p={6} pos="relative" mt={-3} zIndex="1">
+                <Stack spacing="0.5rem" align="center" mb={5}>
                   <Heading fontSize="2xl" fontWeight={500} fontFamily="body">
                     {formatFullName(authState?.user?.displayName || "")}
+                  </Heading>
+                  <Heading
+                    as={Badge}
+                    variant="ghost"
+                    fontSize="sm"
+                    fontWeight={500}
+                    fontFamily="body"
+                    p="0.2rem 0.5rem"
+                    textTransform="none"
+                    rounded="full"
+                    mb={2}
+                  >
+                    {authState?.user?.email || ""}
                   </Heading>
                   <HStack>
                     <Text

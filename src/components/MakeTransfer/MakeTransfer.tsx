@@ -219,7 +219,7 @@ export function MakeTransfer({
                 >
                   <TabList>
                     <Tab _focus={{ outline: "none" }} color="whiteAlpha.800">
-                      Wallet
+                      Cred Tag
                     </Tab>
                     <Tab _focus={{ outline: "none" }} color="whiteAlpha.800">
                       Blockchain
