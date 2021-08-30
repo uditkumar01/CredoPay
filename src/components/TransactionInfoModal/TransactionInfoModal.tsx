@@ -15,6 +15,7 @@ import {
   Thead,
   Tr,
   Badge,
+  Box,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
@@ -34,9 +35,9 @@ export function TransactionInfoModal({
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <>
-      <Button w="full" rounded="full" onClick={onOpen}>
+      <Box w="full" rounded="full" onClick={onOpen}>
         {children}
-      </Button>
+      </Box>
 
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
