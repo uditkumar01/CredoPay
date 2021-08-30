@@ -19,6 +19,7 @@ import {
   InputRightElement,
   Tooltip,
   IconButton,
+  DarkMode,
 } from "@chakra-ui/react";
 import { Dispatch, ReactNode, SetStateAction, useState } from "react";
 import { RiQuestionnaireFill } from "react-icons/all";
@@ -58,7 +59,7 @@ export function CreateWalletModal({
   const [loading, setLoading] = useState(false);
   const { authState } = useAuth();
 
-  const colors = ["gray", "red", "orange", "yellow", "green", "teal", "blue"];
+  const colors = ["gray", "cyan", "blue", "teal", "blue", "teal", "blue"];
 
   // function to update user's doc on firestore
   async function updateUserDoc(payload: any): Promise<void> {
@@ -128,7 +129,7 @@ export function CreateWalletModal({
   };
 
   return (
-    <>
+    <DarkMode>
       <Button onClick={onOpen} {...btnStyles} isLoading={isLoading || loading}>
         {children}
       </Button>
@@ -152,7 +153,7 @@ export function CreateWalletModal({
             <Box p={4}>
               <Stack spacing={8}>
                 <Stack spacing={4} textAlign="center">
-                  <Heading fontSize="2rem">
+                  <Heading fontSize="2rem" color="whiteAlpha.800">
                     <chakra.span>Hola</chakra.span>,{" "}
                     <chakra.span color="blue.300">
                       {formatName(auth().currentUser?.displayName || "")}
@@ -163,11 +164,14 @@ export function CreateWalletModal({
                   </Heading>
                 </Stack>
                 <FormControl isRequired>
-                  <FormLabel htmlFor="credTag">CredTag</FormLabel>
+                  <FormLabel htmlFor="credTag" color="whiteAlpha.800">
+                    CredTag
+                  </FormLabel>
                   <InputGroup>
                     <Input
                       id="credTag"
-                      placeholder={`${
+                      color="whiteAlpha.900"
+                      placeholder={`For example ${
                         auth().currentUser?.displayName?.split(" ")[0] ||
                         "rohan"
                       }0110`}
@@ -201,7 +205,9 @@ export function CreateWalletModal({
                   >
                     Create Wallet
                   </Button>
-                  <Button onClick={onClose}>Close</Button>
+                  <Button color="whiteAlpha.700" onClick={onClose}>
+                    Close
+                  </Button>
                 </Stack>
               </Stack>
             </Box>
@@ -209,6 +215,6 @@ export function CreateWalletModal({
           <ModalFooter> </ModalFooter>
         </ModalContent>
       </Modal>
-    </>
+    </DarkMode>
   );
 }

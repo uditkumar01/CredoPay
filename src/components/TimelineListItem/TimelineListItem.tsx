@@ -47,7 +47,12 @@ export const TimelineListItem = (props: ListItemProps): JSX.Element => {
         </Circle>
         {!isLastItem && <Flex flex="1" borderRightWidth="1px" mb="-12" />}
       </Flex>
-      <Stack spacing="4" pt="1" flex="1">
+      <Stack
+        spacing="4"
+        pt="1"
+        flex="1"
+        color={status === "complete" ? "whiteAlpha.800" : "whiteAlpha.700"}
+      >
         <Flex direction="column">
           <Heading fontSize="md" fontWeight="semibold">
             {title}

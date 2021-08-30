@@ -122,12 +122,35 @@ export function AddFunds({
       //   })();
       // }
       if (cryptoAccounts) {
-        const firstAddress = cryptoAccounts[0].address;
-        const firstChain = cryptoAccounts[0].chain;
-        const firstCurrency = cryptoAccounts[0].currency;
-        setBlockChainAddress(firstAddress);
-        setChain(firstChain);
-        setCurrency(firstCurrency);
+        try {
+          const firstAddress = cryptoAccounts[0].address;
+          const firstChain = cryptoAccounts[0].chain;
+          const firstCurrency = cryptoAccounts[0].currency;
+          setBlockChainAddress(firstAddress);
+          setChain(firstChain);
+          setCurrency(firstCurrency);
+        } catch (e) {
+          (async () => {
+            const payload: CreateETHWalletPayload = {
+              idempotencyKey: v4(),
+              currency: "USD",
+              chain: "ETH",
+            };
+            const newETHAddress = await createETHAddress(
+              authState?.user?.walletId,
+              payload
+            );
+            const userRef = firestore().collection("users");
+            userRef.doc(authState?.user?.uid).update({
+              ...payload,
+              ethAddresses: [
+                ...(authState?.user?.ethAddresses || []),
+                { ...payload, ...newETHAddress },
+              ],
+            });
+          })();
+          console.log(e);
+        }
       }
     }
   }, [cryptoAccounts, showLoadingScreen, authState]);
@@ -155,8 +178,8 @@ export function AddFunds({
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Add Funds</ModalHeader>
-          <ModalCloseButton />
+          <ModalHeader color="whiteAlpha.800">Add Funds</ModalHeader>
+          <ModalCloseButton color="whiteAlpha.700" />
           <ModalBody>
             <Box
               maxW="md"
@@ -165,16 +188,19 @@ export function AddFunds({
               overflow="hidden"
               w="100%"
               p="1rem 1rem 2rem 1rem"
+              color="white"
+              borderColor="gray.600"
             >
               <Stack spacing="1rem">
-                <FormControl>
-                  <FormLabel htmlFor="chain-address">
+                <FormControl isRequired>
+                  <FormLabel color="whiteAlpha.800" htmlFor="chain-address">
                     {!cryptoAccounts || cryptoAccounts.length < 1
                       ? "You currently have no blockchain address"
                       : "Choose an address"}
                   </FormLabel>
                   <Select
                     name="chain-address"
+                    borderColor="gray.600"
                     value={blockChainAddress}
                     isDisabled={!cryptoAccounts || cryptoAccounts.length < 1}
                   >
@@ -225,7 +251,7 @@ export function AddFunds({
             {/* button to copy address and show a success toast */}
             <Flex justify="center" w="full">
               <Button
-                variantColor="green"
+                colorScheme="blue"
                 onClick={() => {
                   navigator.clipboard.writeText(blockChainAddress);
                   toast({

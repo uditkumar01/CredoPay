@@ -40,17 +40,17 @@ export async function getTransactions(
           checkFlag = transaction.source.id === walletId;
         }
         if (!checkFlag && transaction.destination.type === "wallet") {
-          return transaction.destination.id === walletId;
+          checkFlag = transaction.destination.id === walletId;
         }
         if (!checkFlag && transaction.source.type === "blockchain") {
           const hashAdd = transaction.source.address;
-          return cryptoAccounts.some((item) => item.address === hashAdd);
+          checkFlag = cryptoAccounts.some((item) => item.address === hashAdd);
         }
         if (!checkFlag && transaction.destination.type === "blockchain") {
           const hashAdd = transaction.destination.address;
-          return cryptoAccounts.some((item) => item.address === hashAdd);
+          checkFlag = cryptoAccounts.some((item) => item.address === hashAdd);
         }
-        return false;
+        return checkFlag;
       }
     );
     return filteredHistoryData;

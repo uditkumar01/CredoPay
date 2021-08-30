@@ -62,7 +62,10 @@ function historyDataReducer(
     case "ADD_HISTORY_ITEM":
       [newTransaction, ...restTransactions] =
         action.payload.transactionsHistory;
-      if (newTransaction.id === state.transactionsHistory[0].id) {
+      if (
+        state.transactionsHistory.length > 0 &&
+        newTransaction.id === state.transactionsHistory[0].id
+      ) {
         // poping the first item
         newHistoryItem.shift();
       }

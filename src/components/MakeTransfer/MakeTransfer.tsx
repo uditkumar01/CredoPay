@@ -68,6 +68,7 @@ function Field({
             value={value}
             placeholder={placeHolder}
             onChange={handleChange}
+            borderColor="gray.600"
           />
         </InputGroup>
       </FormControl>
@@ -161,23 +162,28 @@ export function MakeTransfer({
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Transfer</ModalHeader>
-          <ModalCloseButton />
+          <ModalHeader color="whiteAlpha.800">Transfer</ModalHeader>
+          <ModalCloseButton color="whiteAlpha.700" />
           <ModalBody>
             <Stack spacing={8}>
               <Box
                 maxW="md"
                 borderWidth="1px"
                 borderRadius="lg"
+                borderColor="gray.600"
                 overflow="hidden"
                 w="100%"
                 p="1rem 1rem 2rem 1rem"
+                color="white"
               >
                 <Stack spacing={4}>
                   <FormControl>
-                    <FormLabel htmlFor="chain">Currency</FormLabel>
+                    <FormLabel color="whiteAlpha.800" htmlFor="chain">
+                      Currency
+                    </FormLabel>
                     <Select
                       name="chain"
+                      borderColor="gray.600"
                       value={currency}
                       onChange={(e) => setCurrency(e.target.value)}
                     >
@@ -204,11 +210,21 @@ export function MakeTransfer({
                 borderRadius="lg"
                 overflow="hidden"
                 w="100%"
+                borderColor="gray.600"
+                color="whiteAlpha.900"
               >
-                <Tabs isFitted onChange={(e) => setIsWallet(e === 0)}>
+                <Tabs
+                  borderColor="gray.600"
+                  isFitted
+                  onChange={(e) => setIsWallet(e === 0)}
+                >
                   <TabList>
-                    <Tab _focus={{ outline: "none" }}>Wallet</Tab>
-                    <Tab _focus={{ outline: "none" }}>Blockchain</Tab>
+                    <Tab _focus={{ outline: "none" }} color="whiteAlpha.800">
+                      Wallet
+                    </Tab>
+                    <Tab _focus={{ outline: "none" }} color="whiteAlpha.800">
+                      Blockchain
+                    </Tab>
                   </TabList>
 
                   <TabPanels>
@@ -231,9 +247,12 @@ export function MakeTransfer({
                           setValue={setReceiverAddress}
                         />
                         <FormControl>
-                          <FormLabel htmlFor="chain">Blockchain type</FormLabel>
+                          <FormLabel htmlFor="chain" color="whiteAlpha.800">
+                            Blockchain type
+                          </FormLabel>
                           <Select
                             name="chain"
+                            borderColor="gray.600"
                             value={chainType}
                             onChange={(e) => setChainType(e.target.value)}
                           >
@@ -255,6 +274,7 @@ export function MakeTransfer({
           </ModalBody>
           <ModalFooter>
             <Button
+              colorScheme="brand"
               onClick={handleSubmit}
               isDisabled={!receiverAddress || !amount}
             >

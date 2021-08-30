@@ -18,6 +18,7 @@ import {
   useToast,
   IconButton,
   HStack,
+  chakra,
 } from "@chakra-ui/react";
 import { RiAccountPinBoxFill } from "react-icons/ri";
 import { NavItem } from "..";
@@ -98,6 +99,7 @@ export function AccountModal({
               boxShadow="2xl"
               rounded="md"
               pos="relative"
+              color="whiteAlpha.900"
             >
               <Box
                 top="0px"
@@ -159,7 +161,10 @@ export function AccountModal({
                   </HStack>
                 </Stack>
                 <Stack spacing={0} align="center" mb={5}>
-                  <Heading>${authState.balance.toFixed(2)}</Heading>
+                  <Heading color="brand.500">
+                    <chakra.span color="brand.600">$ </chakra.span>
+                    {authState.balance.toFixed(2)}
+                  </Heading>
                 </Stack>
                 <Stack direction="row" justify="center" spacing={6}>
                   <Stack

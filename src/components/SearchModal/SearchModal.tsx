@@ -39,6 +39,7 @@ function SearchResult({
     <Button
       variant="unstyled"
       w="full"
+      color="whiteAlpha.900"
       height="full"
       onClick={() => onClick(walletId)}
     >
@@ -140,6 +141,8 @@ export function SearchModal({
             </InputLeftElement>
             <Input
               placeholder="Type user's CredTag"
+              borderColor="gray.600"
+              color="white"
               onChange={(e) => setSearch(e.target.value)}
             />
           </InputGroup>
