@@ -183,15 +183,18 @@ export function CreateWalletModal({
                       onChange={(e) => {
                         if (
                           allUsers &&
-                          !allUsers?.some(
+                          allUsers?.some(
                             (user) =>
                               user?.credTag?.toLowerCase() ===
                               e.target.value?.toLowerCase()
                           )
                         ) {
-                          setCredTag(e.target.value);
-                        } else {
                           setAlreadyUsed(true);
+                        } else {
+                          if (alreadyUsed) {
+                            setAlreadyUsed(false);
+                          }
+                          setCredTag(e.target.value);
                         }
                       }}
                     />
