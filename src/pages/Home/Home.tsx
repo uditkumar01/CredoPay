@@ -258,7 +258,7 @@ export default function Home(): JSX.Element {
                 transform="translateX(-50%) translateY(-50%)"
               />
               <Image
-                alt="Hero Image"
+                alt=""
                 fit="cover"
                 align="center"
                 w="100%"
