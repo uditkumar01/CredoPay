@@ -12,7 +12,7 @@
 <a href="https://github.com/uditkumar01/CredoPay/blob/master/LICENSE"><img src="https://img.shields.io/github/license/uditkumar01/CredoPay" alt="License Badge"/></a>
 </h1> -->
 
-<p align="center"><a href="https://credo-pay.netlify.app/">Credopay</a> lets you to make upi payments using you crypto assets.</p>
+<p align="center"><a href="https://credo-pay.netlify.app/">Credopay</a> lets you to make upi payments using your crypto assets.</p>
 
 ## 💠  Features:
 - Each user is assigned a unique **CredTag** which is a special identity given to a user, for letting other users identify him/her.
