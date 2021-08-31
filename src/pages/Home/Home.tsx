@@ -264,7 +264,7 @@ export default function Home(): JSX.Element {
                 w="100%"
                 h="100%"
                 opacity="0.9"
-                src="https://dat-rs.com/images/block-crypto-ETH.jpg"
+                src="/images/hero.webp"
               />
             </Box>
           </Flex>
