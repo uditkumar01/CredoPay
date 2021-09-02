@@ -122,24 +122,48 @@ export function HistoryDataContextProvider({
     (() => {
       socket.on("notification", async (rawData: any) => {
         const data = JSON.parse(rawData);
-        console.log(data);
-        toast({
-          title: data?.transfer?.errorCode
-            ? "Transaction Failed"
-            : "Transaction Successfull",
-          description: data?.transfer?.errorCode
-            ? `Failed due to ${removeUnderscores(
-                data?.transfer?.errorCode || ""
-              )}`
-            : `Successfully completed transaction`,
-          status: data?.transfer?.errorCode ? "error" : "success",
-          duration: 5000,
-          isClosable: true,
-        });
-        historyDataDispatch({
-          type: "ADD_HISTORY_ITEM",
-          payload: { transactionsHistory: [data?.transfer] },
-        });
+        console.log(data, data?.notificationType);
+        if (data?.notificationType === "transfer") {
+          toast({
+            title: data?.transfer?.errorCode
+              ? "Transaction Failed"
+              : "Transaction Successfull",
+            description: data?.transfer?.errorCode
+              ? `Failed due to ${removeUnderscores(
+                  data?.transfer?.errorCode || ""
+                )}`
+              : `Successfully completed transaction`,
+            status: data?.transfer?.errorCode ? "error" : "success",
+            duration: 5000,
+            isClosable: true,
+          });
+          historyDataDispatch({
+            type: "ADD_HISTORY_ITEM",
+            payload: { transactionsHistory: [data?.transfer] },
+          });
+        } else if (data?.notificationType === "cards") {
+          // toast for card status
+          console.log("card notification");
+          if (data?.card?.status === "complete") {
+            toast({
+              title: "Card Activated",
+              description: `Your ${data?.card?.network} card is successfully activated`,
+              status: "success",
+              duration: 5000,
+              isClosable: true,
+            });
+          } else {
+            toast({
+              title: "Card Activation Failed",
+              description: `Failed due to ${removeUnderscores(
+                data?.card?.errorCode || ""
+              )}`,
+              status: "error",
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+        }
       });
     })();
     // socket off on unmount

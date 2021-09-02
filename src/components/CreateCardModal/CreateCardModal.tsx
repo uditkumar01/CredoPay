@@ -14,9 +14,14 @@ import {
   InputRightElement,
   Flex,
   InputLeftAddon,
+  useToast,
 } from "@chakra-ui/react";
 import { ChangeEvent, useRef, useState } from "react";
+import { BiCreditCard } from "react-icons/bi";
 import { v4 as uuid } from "uuid";
+import { NavItem } from "..";
+import useAuth from "../../context/AuthContext/AuthContext";
+import { auth } from "../../Firebase";
 import { createCard, getPCIPublicKey } from "../../lib/cardsApi";
 import { openPGPEncryption } from "../../lib/openpgp";
 import { CreateCardPayload } from "./CreateCardModal.types";
@@ -58,9 +63,24 @@ function CalenderIcon(): JSX.Element {
   );
 }
 
+const getIP = (): string => "172.33.222.1";
+
 /* eslint-enable max-len */
 
-export function CreateCardModal(): JSX.Element {
+export function CreateCardModal({
+  btnStyles,
+  navBtn,
+}: {
+  navBtn?: boolean;
+  btnStyles?: {
+    [key: string]:
+      | string
+      | Array<string>
+      | {
+          [key: string]: string;
+        };
+  };
+}): JSX.Element {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const initialRef = useRef(null);
@@ -69,6 +89,10 @@ export function CreateCardModal(): JSX.Element {
   const [cardNo, setCardNo] = useState<string>("");
   const [cvv, setCvv] = useState<string>("");
   const [expDate, setExpDate] = useState<string>("");
+  const toast = useToast();
+  const { authState } = useAuth();
+  const phoneNumber = "+12025550180" || auth()?.currentUser?.phoneNumber;
+  const ip = getIP();
 
   // expDateChangeHandler function
   const expDateChangeHandler = (event: ChangeEvent<HTMLInputElement>): void => {
@@ -119,8 +143,8 @@ export function CreateCardModal(): JSX.Element {
     setIsLoading(true);
     try {
       const cardDetails = {
-        number: "4007400000000007",
-        cvv: "123",
+        number: cardNo,
+        cvv,
       };
       const payload: CreateCardPayload = {
         idempotencyKey: uuid(),
@@ -135,15 +159,18 @@ export function CreateCardModal(): JSX.Element {
           district: "MA",
           postalCode: "11111",
           country: "US",
-          name: "Customer 0001",
+          name: authState?.user?.displayName || "Customer 0001",
         },
         metadata: {
-          phoneNumber: "+12025550180",
-          email: "customer-0001@circle.com",
+          phoneNumber,
+          email: authState?.user?.email || "customer-0001@circle.com",
           sessionId: "xxx",
-          ipAddress: "172.33.222.1",
+          ipAddress: ip,
         },
       };
+
+      console.log(payload, cardDetails);
+
       const publicKey = await getPCIPublicKey();
 
       const encryptedData = await openPGPEncryption(cardDetails, publicKey);
@@ -155,32 +182,44 @@ export function CreateCardModal(): JSX.Element {
       const cardRes = await createCard(payload);
       console.log(cardRes.data);
     } catch (error) {
-      console.log(error);
+      console.log(error?.response?.data);
+      // toast for telling user that card was not created
+      toast({
+        title: "Card was not created",
+        description: "Please try again",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
     }
+    setCardNo("");
+    setCvv("");
+    onClose();
     return setIsLoading(false);
   };
 
-  const isDisabled =
-    cardNo.length === 16 && cvv.length === 3 && expDate.length === 5;
+  const isDisabled = cardNo.length === 16 && cvv.length === 3;
 
   return (
     <>
-      <Button
-        p="0.7rem 1.6rem"
-        cursor="pointer"
-        transition="0.2s all ease"
-        m="0"
-        w="100%"
-        justifyContent="flex-start"
-        borderRadius="0"
-        bg="gray.700"
-        color="whiteAlpha.800"
-        onClick={onOpen}
-        _hover={{ bg: "black.500" }}
-        _active={{ bg: "black.500" }}
-      >
-        Create Card
-      </Button>
+      {!navBtn ? (
+        <Button w="full" variant="ghost" onClick={onOpen} {...btnStyles}>
+          Create Card
+        </Button>
+      ) : (
+        <Button
+          variant="unstyled"
+          textAlign="left"
+          fontSize="0.85rem"
+          fontWeight="light"
+          _focus={{
+            outline: "none",
+          }}
+          onClick={onOpen}
+        >
+          <NavItem icon={<BiCreditCard />} label="Create Card" />
+        </Button>
+      )}
 
       <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -189,18 +228,20 @@ export function CreateCardModal(): JSX.Element {
           <ModalCloseButton />
           <ModalBody pb={6}>
             <form>
-              <FormControl m="1rem 0">
-                <InputGroup>
-                  <InputLeftAddon>$</InputLeftAddon>
-                  <Input
-                    ref={initialRef}
-                    placeholder="Amount"
-                    type="text"
-                    value={amount}
-                    onChange={amountChangeHandler}
-                  />
-                </InputGroup>
-              </FormControl>
+              {false && (
+                <FormControl m="1rem 0">
+                  <InputGroup>
+                    <InputLeftAddon>$</InputLeftAddon>
+                    <Input
+                      ref={initialRef}
+                      placeholder="Amount"
+                      type="text"
+                      value={amount}
+                      onChange={amountChangeHandler}
+                    />
+                  </InputGroup>
+                </FormControl>
+              )}
               <FormControl m="0">
                 <InputGroup>
                   <Input
@@ -217,20 +258,22 @@ export function CreateCardModal(): JSX.Element {
                 </InputGroup>
               </FormControl>
               <Flex>
-                <FormControl mt="1rem" mr="1.2rem">
-                  <InputGroup>
-                    <Input
-                      placeholder="mm/yy"
-                      maxLength={5}
-                      type="text"
-                      value={expDate}
-                      onChange={expDateChangeHandler}
-                    />
-                    <InputRightElement>
-                      <CalenderIcon />
-                    </InputRightElement>
-                  </InputGroup>
-                </FormControl>
+                {false && (
+                  <FormControl mt="1rem" mr="1.2rem">
+                    <InputGroup>
+                      <Input
+                        placeholder="mm/yy"
+                        maxLength={5}
+                        type="text"
+                        value={expDate}
+                        onChange={expDateChangeHandler}
+                      />
+                      <InputRightElement>
+                        <CalenderIcon />
+                      </InputRightElement>
+                    </InputGroup>
+                  </FormControl>
+                )}
 
                 <FormControl mt="1rem">
                   <InputGroup>

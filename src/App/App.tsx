@@ -167,9 +167,9 @@ export default function App(): JSX.Element {
             destination: data?.transfer?.destination?.id,
             status: data?.transfer?.status,
           });
+          setTrigger((prev) => (prev === 0 ? 1 : 0));
         }
         console.log("data hereeeee", data);
-        setTrigger((prev) => (prev === 0 ? 1 : 0));
       });
     })();
     // socket off on unmount

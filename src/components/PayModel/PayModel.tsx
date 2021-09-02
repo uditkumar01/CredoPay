@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import QrReader from "react-qr-reader";
 import { ReactElement, useRef, useState } from "react";
-import { BiCreditCard } from "react-icons/bi";
+import { RiSecurePaymentLine } from "react-icons/ri";
 import { v4 } from "uuid";
 import { NavItem } from "../NavItem/NavItem";
 import {
@@ -203,7 +203,7 @@ export function PayModel({
           }}
           onClick={onOpen}
         >
-          <NavItem icon={<BiCreditCard />} label="Pay Now" />
+          <NavItem icon={<RiSecurePaymentLine />} label="Pay Now" />
         </Button>
       )}
 

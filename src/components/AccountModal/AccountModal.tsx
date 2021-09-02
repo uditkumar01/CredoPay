@@ -30,6 +30,7 @@ import {
   WalletBalance,
 } from "../../context/StaticData/StaticData";
 import { formatFullName } from "../../utils/formatName";
+import { CreateCardModal } from "../CreateCardModal/CreateCardModal";
 import { BtnStyles } from "../PayModel/PayModel";
 
 export const Blob = (props: IconProps): JSX.Element => {
@@ -329,6 +330,12 @@ export function AccountModal({
                 >
                   Copy CredTag
                 </Button>
+                <CreateCardModal
+                  btnStyles={{
+                    mt: "1rem",
+                    mb: "-1rem",
+                  }}
+                />
               </Box>
             </Box>
           </Center>
