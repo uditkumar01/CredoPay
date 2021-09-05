@@ -123,7 +123,7 @@ export function HistoryDataContextProvider({
       socket.on("notification", async (rawData: any) => {
         const data = JSON.parse(rawData);
         console.log(data, data?.notificationType);
-        if (data?.notificationType === "transfer") {
+        if (data?.notificationType === "transfers") {
           toast({
             title: data?.transfer?.errorCode
               ? "Transaction Failed"
