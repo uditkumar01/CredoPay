@@ -58,20 +58,18 @@ export function Navbar(): JSX.Element {
             </chakra.h1>
           </Flex>
           <HStack display="flex" alignItems="center" spacing={1}>
-            <Link to="/create-wallet">
-              <Button
-                colorScheme="teal"
-                as="a"
-                bg="brand.500"
-                color="black.1000"
-                _hover={{ bg: "brand.600" }}
-                size="sm"
-                href="https://864xc.csb.app/"
-                target="_blank"
-              >
-                Demo
-              </Button>
-            </Link>
+            <Button
+              colorScheme="teal"
+              as="a"
+              bg="brand.500"
+              color="black.1000"
+              _hover={{ bg: "brand.600" }}
+              size="sm"
+              href="https://864xc.csb.app/"
+              target="_blank"
+            >
+              Demo
+            </Button>
             <Box display={{ base: "inline-flex", md: "none" }}>
               <IconButton
                 display={{ base: "flex", md: "none" }}
