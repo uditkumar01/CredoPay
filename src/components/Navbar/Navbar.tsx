@@ -61,12 +61,15 @@ export function Navbar(): JSX.Element {
             <Link to="/create-wallet">
               <Button
                 colorScheme="teal"
+                as="a"
                 bg="brand.500"
                 color="black.1000"
                 _hover={{ bg: "brand.600" }}
                 size="sm"
+                href="https://864xc.csb.app/"
+                target="_blank"
               >
-                About Us
+                Demo
               </Button>
             </Link>
             <Box display={{ base: "inline-flex", md: "none" }}>
