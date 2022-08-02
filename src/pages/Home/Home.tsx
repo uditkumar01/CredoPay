@@ -269,7 +269,7 @@ export default function Home(): JSX.Element {
                 top="-20%"
                 left={0}
                 zIndex={-1}
-                color={useColorModeValue("gray.900", "blue.400")}
+                color={"gray.900"}
               />
               <Box
                 position="relative"
@@ -311,8 +311,9 @@ export default function Home(): JSX.Element {
               bottom="0%"
               right={"-50%"}
               zIndex={-1}
-              color={useColorModeValue("gray.900", "blue.400")}
+              color={"gray.900"}
             />
+
             <Blob
               w="30%"
               transform={`rotate(${useColorModeValue("180deg", "0deg")})`}
@@ -322,19 +323,19 @@ export default function Home(): JSX.Element {
               left="-50%"
               zIndex={-1}
               opacity={0.2}
-              color={useColorModeValue("gray.400", "blue.400")}
+              color={"gray.400"}
             />
 
             <Blob
-              w="10%"
+              w="20%"
               transform={`rotate(${useColorModeValue("270deg", "0deg")})`}
-              h="100%"
+              h="120%"
               position="absolute"
-              bottom="0%"
+              top="-10%"
               right="50%"
               zIndex={-1}
               opacity={0.2}
-              color={useColorModeValue("blue.900", "blue.400")}
+              color={"blue.900"}
             />
           </Stack>
           <FeaturesSection />
