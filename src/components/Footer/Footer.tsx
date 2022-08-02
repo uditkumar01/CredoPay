@@ -42,10 +42,7 @@ const SocialButton: React.FC<{
 
 export function Footer(): JSX.Element {
   return (
-    <Box
-      bg={useColorModeValue("gray.900", "gray.50")}
-      color={useColorModeValue("gray.200", "gray.700")}
-    >
+    <Box bg={"gray.900"} color={"gray.200"}>
       <Container
         as={Stack}
         maxW={"6xl"}
