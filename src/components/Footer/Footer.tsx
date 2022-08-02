@@ -64,7 +64,7 @@ export function Footer(): JSX.Element {
             CredoPay
           </chakra.h1>
         </chakra.span>
-        <Text>© 2022 Chakra Templates. All rights reserved</Text>
+        <Text>© 2022 CredoPay. All rights reserved</Text>
         <Stack direction={"row"} spacing={6}>
           <SocialButton label={"Twitter"} href={"#"}>
             <FaTwitter />
