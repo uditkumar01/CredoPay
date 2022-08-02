@@ -27,3 +27,8 @@ export { AccountModal } from "./AccountModal/AccountModal";
 export { LoadingScreen } from "./LoadingScreen/LoadingScreen";
 export { SearchModal } from "./SearchModal/SearchModal";
 export { TransactionInfoModal } from "./TransactionInfoModal/TransactionInfoModal";
+export { FeaturesSection } from "./FeaturesSection/FeaturesSection";
+export { Footer } from "./Footer/Footer";
+export { DemoSection } from "./DemoSection/DemoSection";
+export { EarlyAccess } from "./EarlyAccess/EarlyAccess";
+export { ScrollTo } from "./ScrollTo/ScrollTo";

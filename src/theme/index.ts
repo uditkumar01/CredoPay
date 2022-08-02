@@ -7,8 +7,8 @@ export const theme = extendTheme({
     initialColorMode: "dark",
   },
   fonts: {
-    body: "Inter, system-ui, sans-serif",
-    heading: "Inter, system-ui, sans-serif",
+    body: "Poppins, Inter, system-ui, sans-serif",
+    heading: "Poppins, Inter, system-ui, sans-serif",
   },
   colors: {
     brand: {
