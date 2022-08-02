@@ -9,15 +9,16 @@ import {
   Text,
   Container,
   Flex,
+  useToast,
 } from "@chakra-ui/react";
 import { AiOutlineCheck } from "react-icons/ai";
+import { addWaitListUser } from "../../Firebase/waitlist/addWaitlistUser";
 
 export function EarlyAccess(): JSX.Element {
-  const [email, setEmail] = useState("");
   const [state, setState] = useState<"initial" | "submitting" | "success">(
     "initial"
   );
-  const [error, setError] = useState(false);
+  const toast = useToast();
 
   return (
     <Flex minH={"50vh"} maxW="7xl" w="full" align={"center"} justify={"center"}>
@@ -61,26 +62,50 @@ export function EarlyAccess(): JSX.Element {
           direction={{ base: "column", md: "row" }}
           as={"form"}
           spacing={"12px"}
-          onSubmit={(e: FormEvent) => {
+          onSubmit={async (e: FormEvent) => {
             e.preventDefault();
-            setError(false);
+            const formData = new FormData(e.currentTarget as HTMLFormElement);
+            const email = formData.get("email") as string;
+            if (!email) {
+              return toast({
+                title: "Email is required",
+                description: "Please enter your email",
+                status: "error",
+                duration: 4000,
+                isClosable: true,
+              });
+            }
+
             setState("submitting");
 
-            // remove this code and implement your submit logic right here
-            setTimeout(() => {
-              if (email === "fail@example.com") {
-                setError(true);
-                setState("initial");
-                return;
-              }
+            const userRes = await addWaitListUser(email);
 
-              setState("success");
-            }, 1000);
+            if (!userRes.success) {
+              setState("initial");
+              return toast({
+                title: "Unable to add user",
+                description: "Please try again later",
+                status: "error",
+                duration: 4000,
+                isClosable: true,
+              });
+            }
+
+            setState("success");
+            return toast({
+              title: "Successfully added to waitlist",
+              description: "You have been added to the waitlist",
+              status: "success",
+              duration: 4000,
+              isClosable: true,
+            });
           }}
         >
           <FormControl>
             <Input
               variant={"solid"}
+              name={"email"}
+              type={"email"}
               borderWidth={1}
               color={"gray.800"}
               _placeholder={{
@@ -88,15 +113,10 @@ export function EarlyAccess(): JSX.Element {
               }}
               borderColor={useColorModeValue("gray.300", "gray.700")}
               id={"email"}
-              type={"email"}
-              required
               placeholder={"Your Email"}
               aria-label={"Your Email"}
-              value={email}
               disabled={state !== "initial"}
-              onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                setEmail(e.target.value)
-              }
+              required
             />
           </FormControl>
           <FormControl w={{ base: "100%", md: "40%" }}>
@@ -110,14 +130,8 @@ export function EarlyAccess(): JSX.Element {
             </Button>
           </FormControl>
         </Stack>
-        <Text
-          mt={2}
-          textAlign={"center"}
-          color={error ? "red.500" : "gray.500"}
-        >
-          {error
-            ? "Oh no an error occured! 😢 Please try again later."
-            : "You won't receive any spam! ✌️"}
+        <Text mt={2} textAlign={"center"} color={"gray.500"}>
+          {"You won't receive any spam! ✌️"}
         </Text>
       </Container>
     </Flex>
