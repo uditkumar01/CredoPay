@@ -14,36 +14,20 @@ import { AiOutlineCheck } from "react-icons/ai";
 // Replace test data with your own
 const features = [
   {
-    title: "Lorem ipsum dolor sit amet",
-    text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.",
+    title: "Send",
+    text: "Pay anyone instantly with CredoPay",
   },
   {
-    title: "Lorem ipsum dolor sit amet",
-    text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.",
+    title: "Spend",
+    text: "Easily scan UPI QR code and pay anywhere",
   },
   {
-    title: "Lorem ipsum dolor sit amet",
-    text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.",
+    title: "Grow",
+    text: "Get upto 15% APR on your stablecoin deposits",
   },
   {
-    title: "Lorem ipsum dolor sit amet",
-    text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.",
-  },
-  {
-    title: "Lorem ipsum dolor sit amet",
-    text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.",
-  },
-  {
-    title: "Lorem ipsum dolor sit amet",
-    text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.",
-  },
-  {
-    title: "Lorem ipsum dolor sit amet",
-    text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.",
-  },
-  {
-    title: "Lorem ipsum dolor sit amet",
-    text: "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam.",
+    title: "Invest",
+    text: "Invest in Bitcoin, Ethereum and other 100+ cryptocurrencies",
   },
 ];
 
@@ -52,12 +36,10 @@ export function FeaturesSection(): JSX.Element {
     <Box p={4}>
       <Stack spacing={4} as={Container} maxW={"3xl"} textAlign={"center"}>
         <Heading color="whiteAlpha.900" fontSize={"5xl"}>
-          This is the headline
+          Features & Benefits
         </Heading>
         <Text color={"gray.600"} fontSize={"xl"}>
-          Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-          nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
-          sed diam voluptua.
+          CredoPay is a decentralized payment platform that enables anyone to
         </Text>
       </Stack>
 
