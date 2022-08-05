@@ -211,17 +211,16 @@ export default function Home(): JSX.Element {
                     opacity: "0.9",
                   }}
                 >
-                  Payments,
+                  UPI
                 </Text>
                 <br />
                 <Text as="span" color="brand.400">
-                  made easy!
+                  {"🤝🏻"} Crypto
                 </Text>
               </Heading>
               <Text color="gray.500">
                 Credopay is the solution which helps you pay your bills using
-                your crypto assets.This platform is build for NFT Vision
-                hackathon 2021. This is the BETA version of our product.
+                your crypto assets. Buy, sell and pay using cryptocurrency.
               </Text>
               <Stack
                 spacing={{ base: 4, sm: 6 }}

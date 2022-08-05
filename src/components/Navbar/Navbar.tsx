@@ -12,8 +12,9 @@ import {
   useColorModeValue,
   Image,
 } from "@chakra-ui/react";
-import { AiOutlineMenu } from "react-icons/all";
+import { AiFillPlayCircle, AiOutlineMenu } from "react-icons/all";
 import { Link } from "react-router-dom";
+import { ScrollTo } from "../ScrollTo/ScrollTo";
 
 export function Navbar(): JSX.Element {
   const bg = useColorModeValue("white", "gray.800");
@@ -58,19 +59,18 @@ export function Navbar(): JSX.Element {
             </chakra.h1>
           </Flex>
           <HStack display="flex" alignItems="center" spacing={1}>
-            <Button
-              colorScheme="teal"
-              as="a"
-              bg="brand.500"
-              color="black.1000"
-              _hover={{ bg: "brand.600" }}
-              size="sm"
-              href="https://864xc.csb.app/"
-              target="_blank"
-            >
-              Demo
-            </Button>
-            <Box display={{ base: "inline-flex", md: "none" }}>
+            <ScrollTo scrollToId="watch-demo">
+              <Button
+                colorScheme="teal"
+                bg="brand.500"
+                color="black.1000"
+                _hover={{ bg: "brand.600" }}
+                size="sm"
+              >
+                <AiFillPlayCircle size={16} /> &nbsp; Watch Demo
+              </Button>
+            </ScrollTo>
+            {/* <Box display={{ base: "inline-flex", md: "none" }}>
               <IconButton
                 display={{ base: "flex", md: "none" }}
                 aria-label="Open menu"
@@ -106,7 +106,7 @@ export function Navbar(): JSX.Element {
                   </Button>
                 </Link>
               </VStack>
-            </Box>
+            </Box> */}
           </HStack>
         </Flex>
       </chakra.header>
