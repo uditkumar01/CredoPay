@@ -12,10 +12,10 @@ import {
   Tbody,
   Td,
   Th,
-  Thead,
   Tr,
   Badge,
   Box,
+  DarkMode,
 } from "@chakra-ui/react";
 import { ReactNode } from "react";
 
@@ -42,32 +42,35 @@ export function TransactionInfoModal({
       <Modal onClose={onClose} isOpen={isOpen} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Transaction Info</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <Table size="sm" borderColor="grey.400">
-              <Tbody>
-                <Tr>
-                  <Th>From</Th>
-                  <Td isNumeric>{source}</Td>
-                </Tr>
-                <Tr>
-                  <Th>To</Th>
-                  <Td isNumeric>{destination}</Td>
-                </Tr>
-                <Tr>
-                  <Th>Amount</Th>
-                  <Td isNumeric>
-                    {amount}
-                    <Badge>{currency}</Badge>
-                  </Td>
-                </Tr>
-              </Tbody>
-            </Table>
-          </ModalBody>
-          <ModalFooter>
-            <Button onClick={onClose}>Close</Button>
-          </ModalFooter>
+          <DarkMode>
+            <ModalHeader color="gray.100">Transaction Info</ModalHeader>
+            <ModalCloseButton color="gray.400" />
+            <ModalBody>
+              <Table size="sm" borderColor="grey.400">
+                <Tbody color="#fff">
+                  <Tr>
+                    <Th>From</Th>
+                    <Td isNumeric>{source}</Td>
+                  </Tr>
+                  <Tr>
+                    <Th>To</Th>
+                    <Td isNumeric>{destination}</Td>
+                  </Tr>
+                  <Tr>
+                    <Th>Amount</Th>
+                    <Td isNumeric>
+                      {amount} <Badge>{currency}</Badge>
+                    </Td>
+                  </Tr>
+                </Tbody>
+              </Table>
+            </ModalBody>
+            <ModalFooter>
+              <Button onClick={onClose} variant="outline" colorScheme="red">
+                Close
+              </Button>
+            </ModalFooter>
+          </DarkMode>
         </ModalContent>
       </Modal>
     </>

@@ -328,10 +328,10 @@ export default function Home(): JSX.Element {
             <Blob
               w="20%"
               transform={`rotate(${useColorModeValue("270deg", "0deg")})`}
-              h="140%"
+              h="150%"
               position="absolute"
-              top="-20%"
-              right="50%"
+              top="-30%"
+              left="-60%"
               zIndex={-1}
               opacity={0.2}
               color={"blue.900"}

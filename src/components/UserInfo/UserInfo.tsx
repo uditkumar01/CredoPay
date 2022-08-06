@@ -23,8 +23,8 @@ export const UserInfo = (): JSX.Element => {
   } = useAuth();
   return (
     <Flex
-      bgImage="/images/cardImage.webp"
-      bgAttachment="fixed"
+      bgImage="linear-gradient(to bottom, #073892 0%, #07549267 100%)"
+      // bgAttachment="fixed"
       width="97%"
       padding="1.3rem 1.5rem"
       margin="1rem 0rem"
