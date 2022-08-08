@@ -219,8 +219,8 @@ export default function Home(): JSX.Element {
                 </Text>
               </Heading>
               <Text color="gray.500">
-                Credopay is the solution which helps you pay your bills using
-                your crypto assets. Buy, sell and pay using cryptocurrency.
+                Scan any UPI QR code and pay with crypto. Credopay is the easy
+                way to send, spend, bank, and invest.
               </Text>
               <Stack
                 spacing={{ base: 4, sm: 6 }}
