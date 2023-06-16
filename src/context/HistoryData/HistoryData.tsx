@@ -126,6 +126,12 @@ export function HistoryDataContextProvider({
         const data = JSON.parse(rawData);
         const currentWalletId = authState?.user?.walletId;
         console.debug(data, data?.notificationType);
+        console.debug(
+          data?.transfer?.source?.id,
+          data?.transfer?.destination?.id,
+          currentWalletId === data?.transfer?.source?.id,
+          currentWalletId === data?.transfer?.destination?.id
+        );
         if (data?.notificationType === "transfers") {
           if (currentWalletId === data?.transfer?.source?.id) {
             toast({
@@ -141,6 +147,10 @@ export function HistoryDataContextProvider({
               duration: 5000,
               isClosable: true,
             });
+            historyDataDispatch({
+              type: "ADD_HISTORY_ITEM",
+              payload: { transactionsHistory: [data?.transfer] },
+            });
           } else if (
             !data?.transfer?.errorCode &&
             currentWalletId === data?.transfer?.destination?.id
@@ -152,11 +162,11 @@ export function HistoryDataContextProvider({
               duration: 5000,
               isClosable: true,
             });
+            historyDataDispatch({
+              type: "ADD_HISTORY_ITEM",
+              payload: { transactionsHistory: [data?.transfer] },
+            });
           }
-          historyDataDispatch({
-            type: "ADD_HISTORY_ITEM",
-            payload: { transactionsHistory: [data?.transfer] },
-          });
         } else if (data?.notificationType === "cards") {
           // toast for card status
           console.debug("card notification");
