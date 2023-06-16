@@ -1,7 +1,7 @@
 import { useRef } from "react";
 
 export interface IScrollToProps {
-  scrollToId?: string;
+  scrollToId: string;
   children: React.ReactNode;
   focus?: boolean;
 }
