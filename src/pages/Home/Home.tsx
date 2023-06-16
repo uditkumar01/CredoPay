@@ -227,8 +227,8 @@ export default function Home(): JSX.Element {
                 direction={{ base: "column", sm: "row" }}
               >
                 <DarkMode>
-                  {/* {getDashBoardBtn()} */}
-                  <ScrollTo scrollToId="early-access-form">
+                  {getDashBoardBtn()}
+                  {/* <ScrollTo scrollToId="early-access-form">
                     <Button
                       w="full"
                       colorScheme="orange"
@@ -238,7 +238,7 @@ export default function Home(): JSX.Element {
                     >
                       Join the waitlist
                     </Button>
-                  </ScrollTo>
+                  </ScrollTo> */}
                   <ScrollTo scrollToId="watch-demo">
                     <Button
                       leftIcon={<BiPlayCircle size={25} />}
