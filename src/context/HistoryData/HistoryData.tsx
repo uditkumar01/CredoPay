@@ -118,7 +118,7 @@ export function HistoryDataContextProvider({
   };
 
   useEffect(() => {
-    if (!authState?.user?.walletId) return 0;
+    if (!authState?.user?.walletId) return () => {};
     console.debug("listening...");
     // socket listener on to get updated transactions status
     (() => {
