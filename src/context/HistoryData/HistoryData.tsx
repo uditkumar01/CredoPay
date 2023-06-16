@@ -141,7 +141,10 @@ export function HistoryDataContextProvider({
               duration: 5000,
               isClosable: true,
             });
-          } else if (!data?.transfer?.errorCode && currentWalletId === data?.transfer?.destination?.id) {
+          } else if (
+            !data?.transfer?.errorCode &&
+            currentWalletId === data?.transfer?.destination?.id
+          ) {
             toast({
               title: "Crypto Received!",
               description: `Received ${data?.transfer?.amount?.amount} ${data?.transfer?.amount?.currency} sent by ${data?.transfer?.source?.id} ${data?.transfer?.source?.type}`,
