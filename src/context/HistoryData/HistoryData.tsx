@@ -127,7 +127,7 @@ export function HistoryDataContextProvider({
         const currentWalletId = authState?.user?.walletId;
         console.debug(data, data?.notificationType);
         if (data?.notificationType === "transfers") {
-          if(currentWalletId === data?.transfer?.source?.id) {
+          if (currentWalletId === data?.transfer?.source?.id) {
             toast({
               title: data?.transfer?.errorCode
                 ? "Transaction Failed"
