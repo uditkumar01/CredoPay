@@ -116,7 +116,6 @@ export default function Home(): JSX.Element {
             leftIcon={<Image src="/svgs/logo.svg" h="26px" />}
             size="lg"
             colorScheme="blue"
-            rounded="full"
             isLoading={btnLoading}
             href="/dashboard"
             textDecoration="none"
@@ -135,7 +134,6 @@ export default function Home(): JSX.Element {
               variant: "outline",
               size: "lg",
               colorScheme: "blue",
-              rounded: "full",
               leftIcon: <Image src="/svgs/logo.svg" h="26px" />,
             }}
             isLoading={btnLoading}
@@ -155,7 +153,6 @@ export default function Home(): JSX.Element {
             leftIcon={<FcGoogle />}
             size="lg"
             colorScheme="blue"
-            rounded="full"
             isLoading={btnLoading}
             onClick={() => {
               (async () => {
@@ -227,7 +224,9 @@ export default function Home(): JSX.Element {
                 direction={{ base: "column", sm: "row" }}
               >
                 <DarkMode>
-                  {getDashBoardBtn()}
+                  <ScrollTo>
+                    {getDashBoardBtn()}
+                  </ScrollTo>
                   {/* <ScrollTo scrollToId="early-access-form">
                     <Button
                       w="full"
