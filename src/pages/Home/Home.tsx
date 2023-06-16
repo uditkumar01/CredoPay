@@ -224,9 +224,7 @@ export default function Home(): JSX.Element {
                 direction={{ base: "column", sm: "row" }}
               >
                 <DarkMode>
-                  <ScrollTo>
-                    {getDashBoardBtn()}
-                  </ScrollTo>
+                  {getDashBoardBtn()}
                   {/* <ScrollTo scrollToId="early-access-form">
                     <Button
                       w="full"
