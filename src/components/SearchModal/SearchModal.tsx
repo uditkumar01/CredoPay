@@ -99,7 +99,7 @@ export function SearchModal({
     setValue(value);
     onClose();
   }
-  console.log(search);
+  console.debug(search);
 
   const filteredUsersFromQuery =
     allUsers && search.length > 0

@@ -121,7 +121,7 @@ export function CreateCardModal({
 
   const amountChangeHandler = (event: ChangeEvent<HTMLInputElement>): null => {
     const amountValue = event.target.value;
-    console.log(amountValue, !amountValue.length, amountValue.match(/^\d+$/));
+    console.debug(amountValue, !amountValue.length, amountValue.match(/^\d+$/));
     // check if string contains only numbers
     if (!amountValue.length || amountValue.match(/^\d+$/)) {
       setAmount(amountValue);
@@ -169,7 +169,7 @@ export function CreateCardModal({
         },
       };
 
-      console.log(payload, cardDetails);
+      console.debug(payload, cardDetails);
 
       const publicKey = await getPCIPublicKey();
 
@@ -180,9 +180,9 @@ export function CreateCardModal({
       payload.encryptedData = encryptedMessage;
 
       const cardRes = await createCard(payload);
-      console.log(cardRes.data);
+      console.debug(cardRes.data);
     } catch (error) {
-      console.log(error?.response?.data);
+      console.debug(error?.response?.data);
       // toast for telling user that card was not created
       toast({
         title: "Card was not created",

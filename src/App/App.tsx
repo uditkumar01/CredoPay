@@ -76,7 +76,7 @@ export default function App(): JSX.Element {
   }
 
   useEffect(() => {
-    console.log(initiateTransferTrigger, "triggered");
+    console.debug(initiateTransferTrigger, "triggered");
     try {
       if (authState?.user?.uid) {
         (async () => {
@@ -84,7 +84,7 @@ export default function App(): JSX.Element {
             initiateTransferTrigger,
             authState?.user?.uid || ""
           );
-          console.log(
+          console.debug(
             transferRes,
             transferRes?.success,
             transferRes?.transfer_amount,
@@ -131,22 +131,22 @@ export default function App(): JSX.Element {
                 isClosable: true,
               });
             } catch (error) {
-              console.log(error, "error");
+              console.debug(error, "error");
             }
 
-            // console.log(userDoc);
+            // console.debug(userDoc);
             // update current user local state
             authDispatch({
               type: "UPDATE_TRANSACTION",
               payload: transactions,
             });
-            // console.log({ payload, resTransfer });
+            // console.debug({ payload, resTransfer });
             // success toast for payment
           }
         })();
       }
     } catch (e) {
-      console.log(e);
+      console.debug(e);
     }
   }, [initiateTransferTrigger]);
 
@@ -155,7 +155,7 @@ export default function App(): JSX.Element {
     (() => {
       socket.on("notification", async (rawData: any) => {
         const data = JSON.parse(rawData);
-        console.log(
+        console.debug(
           data?.notificationType,
           "transfers",
           data?.notificationType === "transfers"
@@ -169,7 +169,7 @@ export default function App(): JSX.Element {
           });
           setTrigger((prev) => (prev === 0 ? 1 : 0));
         }
-        console.log("data hereeeee", data);
+        console.debug("data hereeeee", data);
       });
     })();
     // socket off on unmount

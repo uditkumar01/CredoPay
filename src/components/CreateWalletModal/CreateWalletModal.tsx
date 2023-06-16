@@ -70,7 +70,7 @@ export function CreateWalletModal({
     try {
       const email = authState.user?.email || auth()?.currentUser?.email;
       if (email) {
-        console.log(email);
+        console.debug(email);
 
         const userRef = firestore().collection("users");
         // getting user if his email is found in firestore
@@ -91,7 +91,7 @@ export function CreateWalletModal({
         setBtnStatus("dashboard");
       }
     } catch (err) {
-      console.log("Error while updating user doc", err);
+      console.debug("Error while updating user doc", err);
     }
   }
 
@@ -127,7 +127,7 @@ export function CreateWalletModal({
       // navigate user to dashboard
       // window.location.href = "/dashboard";
     } catch (err) {
-      console.log("Error while creating wallet", err);
+      console.debug("Error while creating wallet", err);
     }
     setLoading(false);
   };

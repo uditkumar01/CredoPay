@@ -50,7 +50,7 @@ export async function transfer(payload: TransferPayload): Promise<any> {
     const response = await axiosInstance.post(url, payload);
     return response.data.data;
   } catch (error) {
-    console.log(error, payload);
+    console.debug(error, payload);
     return error.response.data;
   }
 }

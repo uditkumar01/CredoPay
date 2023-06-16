@@ -32,7 +32,7 @@ export async function getTransactions(
 ): Promise<any> {
   try {
     const response = await axiosInstance.get("/v1/transfers");
-    console.log(response.data?.data);
+    console.debug(response.data?.data);
     const filteredHistoryData = response?.data?.data?.filter(
       (transaction: Transaction) => {
         let checkFlag = false;
@@ -55,7 +55,7 @@ export async function getTransactions(
     );
     return filteredHistoryData;
   } catch (error) {
-    console.log(error);
+    console.debug(error);
     return error;
   }
 }

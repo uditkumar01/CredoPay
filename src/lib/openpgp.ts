@@ -23,7 +23,7 @@ export async function openPGPEncryption(
   keyId: string;
   encryptedMessage: string;
 }> {
-  console.log(publicKey, keyId);
+  console.debug(publicKey, keyId);
   if (!publicKey || !keyId) {
     throw new Error("Unable to encrypt data");
   }

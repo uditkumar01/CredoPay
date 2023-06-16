@@ -121,7 +121,7 @@ export function MakeTransfer({
       idempotencyKey: v4(),
     };
 
-    // console.log(payload);
+    // console.debug(payload);
     const res = await transfer(payload);
 
     historyDataDispatch({
@@ -131,7 +131,7 @@ export function MakeTransfer({
       },
     });
 
-    console.log(res);
+    console.debug(res);
     onClose();
     setReceiverAddress("");
     return null;

@@ -107,7 +107,7 @@ async function getCryptoData(): Promise<any> {
       cryptoData: resData,
     };
   } catch (e) {
-    console.log("while getting crypto data", e);
+    console.debug("while getting crypto data", e);
   }
   return []; // unecessary
 }
@@ -140,7 +140,7 @@ export function StaticDataContextProvider({
 
   async function getUserWallets(): Promise<any> {
     const resUserWallets = await getWallets();
-    console.log("resUserWallets", resUserWallets);
+    console.debug("resUserWallets", resUserWallets);
     // find current user wallets
     return resUserWallets?.filter(
       (wallet: Wallet) => wallet?.walletId === authState?.user?.walletId
@@ -149,7 +149,7 @@ export function StaticDataContextProvider({
 
   useEffect(() => {
     if (!showLoadingScreen && authState.isLoggedIn) {
-      console.log("getting static data");
+      console.debug("getting static data");
       (async () => {
         try {
           const resCryptoData = await getCryptoData();
@@ -170,13 +170,13 @@ export function StaticDataContextProvider({
             },
           });
         } catch (e) {
-          console.log("while static data fetching", e);
+          console.debug("while static data fetching", e);
         }
       })();
     }
   }, [authState.isLoggedIn, showLoadingScreen, trigger]);
 
-  console.log("staticDataState", staticDataState);
+  console.debug("staticDataState", staticDataState);
 
   return (
     <StaticDataContext.Provider value={{ ...staticDataState, setTrigger }}>

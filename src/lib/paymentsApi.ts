@@ -41,5 +41,5 @@ export async function createPayment(payload: BasePaymentPayload): Promise<any> {
   // }
   const res = await axiosInstance.post(url, payload);
 
-  console.log({ res });
+  console.debug({ res });
 }

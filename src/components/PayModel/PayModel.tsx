@@ -127,7 +127,7 @@ export function PayModel({
       //   amount,
       //   authState?.user?.walletId || "creadopay"
       // );
-      // console.log(res);
+      // console.debug(res);
       // const transactions = [...(authState?.user?.transactions || [])];
       // transactions.unshift({
       //   id: idempotencyKey,
@@ -153,14 +153,14 @@ export function PayModel({
       //   .update({
       //     transactions,
       //   });
-      // console.log(userDoc);
+      // console.debug(userDoc);
       // update current user local state
       // authDispatch({
       //   type: "UPDATE_TRANSACTION",
       //   payload: transactions,
       // });
 
-      // console.log({ payload, resTransfer });
+      // console.debug({ payload, resTransfer });
 
       // success toast for payment
 
@@ -172,7 +172,7 @@ export function PayModel({
       //   isClosable: true,
       // });
     } catch (error) {
-      console.log(error);
+      console.debug(error);
       // failed toast for payment
       toast({
         title: "Payment Failed",
@@ -184,7 +184,7 @@ export function PayModel({
     }
   }
 
-  console.log(currency);
+  console.debug(currency);
 
   return (
     <DarkMode>

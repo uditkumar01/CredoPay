@@ -29,7 +29,7 @@ export async function createWallet(payload: CreateWalletPayload): Promise<any> {
     const response = await axiosInstance.post(url, payload);
     return response?.data?.data;
   } catch (error) {
-    console.log(error);
+    console.debug(error);
     return error;
   }
 }

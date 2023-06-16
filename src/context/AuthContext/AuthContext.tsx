@@ -24,7 +24,7 @@ const signIn = async (): Promise<SignInOutResType> => {
   auth()
     .signInWithPopup(provider)
     .catch((err) => {
-      console.log("signIn error", err.message, err);
+      console.debug("signIn error", err.message, err);
       return { error: "something went wrong", success: false };
     });
   return { success: true };
@@ -35,7 +35,7 @@ const signOut = async (): Promise<SignInOutResType> => {
     auth()
       .signOut()
       .catch((err) => {
-        console.log("signOut error", err.message, err);
+        console.debug("signOut error", err.message, err);
         return { error: "something went wrong", success: false };
       });
   }

@@ -109,7 +109,7 @@ export function HistoryDataContextProvider({
       return (new Date(b.createDate) as any) - (new Date(a.createDate) as any);
     });
 
-    console.log({ sortedData });
+    console.debug({ sortedData });
 
     historyDataDispatch({
       type: "SET_HISTORY_DATA",
@@ -118,32 +118,45 @@ export function HistoryDataContextProvider({
   };
 
   useEffect(() => {
+    if (!authState?.user?.walletId) return;
+    console.debug('listening...')
     // socket listener on to get updated transactions status
     (() => {
       socket.on("notification", async (rawData: any) => {
         const data = JSON.parse(rawData);
-        console.log(data, data?.notificationType);
+        const currentWalletId = authState?.user?.walletId;
+        console.debug(data, data?.notificationType);
         if (data?.notificationType === "transfers") {
-          toast({
-            title: data?.transfer?.errorCode
-              ? "Transaction Failed"
-              : "Transaction Successfull",
-            description: data?.transfer?.errorCode
-              ? `Failed due to ${removeUnderscores(
-                  data?.transfer?.errorCode || ""
-                )}`
-              : `Successfully completed transaction`,
-            status: data?.transfer?.errorCode ? "error" : "success",
-            duration: 5000,
-            isClosable: true,
-          });
+          if(currentWalletId === data?.transfer?.source?.id) {
+            toast({
+              title: data?.transfer?.errorCode
+                ? "Transaction Failed"
+                : "Transaction Successful!",
+              description: data?.transfer?.errorCode
+                ? `Failed due to ${removeUnderscores(
+                    data?.transfer?.errorCode || ""
+                  )}`
+                : `Sent ${data?.transfer?.amount?.amount} ${data?.transfer?.amount?.currency} to ${data?.transfer?.destination?.id} ${data?.transfer?.destination?.type}`,
+              status: data?.transfer?.errorCode ? "error" : "success",
+              duration: 5000,
+              isClosable: true,
+            });
+          } else if (!data?.transfer?.errorCode) {
+            toast({
+              title: "Crypto Received!",
+              description: `Received ${data?.transfer?.amount?.amount} ${data?.transfer?.amount?.currency} sent by ${data?.transfer?.source?.id} ${data?.transfer?.source?.type}`,
+              status: data?.transfer?.errorCode ? "error" : "success",
+              duration: 5000,
+              isClosable: true,
+            });
+          }
           historyDataDispatch({
             type: "ADD_HISTORY_ITEM",
             payload: { transactionsHistory: [data?.transfer] },
           });
         } else if (data?.notificationType === "cards") {
           // toast for card status
-          console.log("card notification");
+          console.debug("card notification");
           if (data?.card?.status === "complete") {
             toast({
               title: "Card Activated",
@@ -170,7 +183,7 @@ export function HistoryDataContextProvider({
     return () => {
       socket.off("notification");
     };
-  }, []);
+  }, [authState?.user?.walletId]);
 
   useEffect(() => {
     // get initial transactions data

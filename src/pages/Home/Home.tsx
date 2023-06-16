@@ -68,7 +68,7 @@ export default function Home(): JSX.Element {
       let progressBtn = "signin";
       if (email) {
         setBtnLoading(true);
-        console.log(email);
+        console.debug(email);
 
         (async () => {
           let userRef = firestore().collection("users");
@@ -82,27 +82,27 @@ export default function Home(): JSX.Element {
           }
 
           const user = snapshot.docs[0].data();
-          console.log(user);
+          console.debug(user);
           try {
             const res = await getWalletInfo(user?.walletId || "");
-            console.log({ res });
+            console.debug({ res });
             if (res) {
               progressBtn = "dashboard";
             } else {
               progressBtn = "wallet";
             }
           } catch (e) {
-            console.log("error while checking wallet id", e);
+            console.debug("error while checking wallet id", e);
           }
-          console.log({ progressBtn });
+          console.debug({ progressBtn });
           setBtnStatus(progressBtn);
         })();
       }
-      console.log(progressBtn, "progress");
+      console.debug(progressBtn, "progress");
       setBtnLoading(false);
     }
   }, [showLoadingScreen, isLoggedIn]);
-  console.log(btnStatus, "btn status");
+  console.debug(btnStatus, "btn status");
 
   const getDashBoardBtn = (): JSX.Element => {
     switch (btnStatus) {
@@ -160,7 +160,7 @@ export default function Home(): JSX.Element {
                 try {
                   await signIn();
                 } catch (e) {
-                  console.log(e);
+                  console.debug(e);
                 }
                 setBtnLoading(false);
               })();

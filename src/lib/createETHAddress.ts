@@ -25,7 +25,7 @@ export async function createETHAddress(
     const response = await axiosInstance.post(url, payload);
     return response?.data?.data;
   } catch (err) {
-    console.log(err);
+    console.debug(err);
     return err.response?.data;
   }
 }

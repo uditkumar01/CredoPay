@@ -40,7 +40,7 @@ export async function getBlockchainAddresses(
   // make list of all addresses
   let allAddressesList: Array<CryptoAccount> = [];
   allAddresses.forEach((res) => {
-    console.log(res?.data?.data);
+    console.debug(res?.data?.data);
     allAddressesList = allAddressesList.concat(res?.data?.data);
   });
 

@@ -19,7 +19,7 @@ dotenv.config();
 //   },
 // });
 
-// console.log(payload);
+// console.debug(payload);
 
 // parsing upi using query string
 export function parseUpi(upi: string): any {
@@ -33,7 +33,7 @@ export function parseUpi(upi: string): any {
     const upiData = quertString.parse(parsed);
     return upiData;
   } catch (e) {
-    console.log(e);
+    console.debug(e);
     return {};
   }
 }
@@ -45,7 +45,7 @@ export async function initiateTransfer(data: any, uid: string): Promise<any> {
       const userRef = await firestore().collection("users").doc(uid).get();
       const userData = userRef.data();
       const payload = userData?.pendingTransfers?.find((transfer: any) => {
-        // console.log(
+        // console.debug(
         //   transfer,
         //   transfer?.source,
         //   data?.source,
@@ -65,9 +65,9 @@ export async function initiateTransfer(data: any, uid: string): Promise<any> {
             Number(data?.amount)?.toFixed(8)
         );
       });
-      console.log(payload, userData, "testing");
+      console.debug(payload, userData, "testing");
       const res = await axios.post(url, payload?.payload);
-      console.log(res.data?.data);
+      console.debug(res.data?.data);
       return {
         success: true,
         ...payload?.payload,
@@ -76,7 +76,7 @@ export async function initiateTransfer(data: any, uid: string): Promise<any> {
 
     return { success: false };
   } catch (err) {
-    console.log(err.message);
+    console.debug(err.message);
     return { success: false };
   }
 }
@@ -115,7 +115,7 @@ export async function queneTransfer(
     currency_code: "INR",
   };
 
-  console.log(payload, "payload");
+  console.debug(payload, "payload");
   try {
     // quene transfer on firebase
     await firestore()
@@ -130,7 +130,7 @@ export async function queneTransfer(
 
     return payload;
   } catch (err) {
-    console.log(err.message);
+    console.debug(err.message);
     return err.message;
   }
 }

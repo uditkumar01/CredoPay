@@ -149,7 +149,7 @@ export function AddFunds({
               ],
             });
           })();
-          console.log(e);
+          console.debug(e);
         }
       }
     }

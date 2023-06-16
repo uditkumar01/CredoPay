@@ -16,13 +16,13 @@ const axiosInstance = axios.create({
 
 // get Info of a wallet
 export async function getWalletInfo(walletId: string): Promise<any> {
-  console.log({ walletId });
+  console.debug({ walletId });
   try {
     const url = `/v1/wallets/${walletId}`;
     const response = await axiosInstance.get(url);
     return response?.data;
   } catch (error) {
-    console.log(error.message);
+    console.debug(error.message);
     return false;
   }
 }
